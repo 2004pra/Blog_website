@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import PostCard from './PostCard.jsx';
+import { API_BASE_URL } from '../api.js';
 import '../styles/Profile.css';
 
 export default function Profile() {
@@ -36,7 +37,7 @@ export default function Profile() {
   const loadUserPosts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/posts/', {
+      const response = await fetch(`${API_BASE_URL}/posts/`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });

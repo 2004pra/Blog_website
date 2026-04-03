@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { getRandomAnimeCharacter } from '../utils/animeAvatar.js';
+import { API_BASE_URL } from '../api.js';
 
 export const AuthContext = createContext();
 
@@ -21,7 +22,7 @@ export function AuthProvider({ children }) {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -63,7 +64,7 @@ export function AuthProvider({ children }) {
       const character = await getRandomAnimeCharacter();
       console.log('Anime character fetched during signup:', character);
 
-      const response = await fetch('http://localhost:5000/signup', {
+      const response = await fetch(`${API_BASE_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

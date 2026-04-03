@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
+import { API_BASE_URL } from '../api.js';
 import '../styles/PostForm.css';
 
 export default function EditPost() {
@@ -24,7 +25,7 @@ export default function EditPost() {
   const loadPost = async () => {
     try {
       setInitialLoading(true);
-      const response = await fetch('http://localhost:5000/posts/', {
+      const response = await fetch(`${API_BASE_URL}/posts/`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -61,7 +62,7 @@ export default function EditPost() {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/posts/update/${postId}`, {
+      const response = await fetch(`${API_BASE_URL}/posts/update/${postId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

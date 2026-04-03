@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
+import { API_BASE_URL } from '../api.js';
 import '../styles/PostForm.css';
 
 export default function CreatePost() {
@@ -23,7 +24,7 @@ export default function CreatePost() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/posts/create_post', {
+      const response = await fetch(`${API_BASE_URL}/posts/create_post`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
