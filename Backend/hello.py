@@ -95,7 +95,7 @@ def login():
 
 
 #
-
+handler = app
     
 
 @app.route('/')
