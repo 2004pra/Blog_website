@@ -112,6 +112,6 @@ if __name__ == '__main__':
 
 from flask import send_file
 
-@app.route('oaderio-008b1e2cedea14cabab1f2b077e3df12.txt')
+@app.route('loaderio-008b1e2cedea14cabab1f2b077e3df12.txt')
 def loaderio_verify():
-    return send_file('loaderio-abc123.txt')
+    return send_file('loaderio-008b1e2cedea14cabab1f2b077e3df12.txt')
