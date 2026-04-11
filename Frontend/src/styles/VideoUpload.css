@@ -1,0 +1,117 @@
+.video-form-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  min-height: calc(100vh - 60px);
+}
+
+.video-form-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-card, #ffffff);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--text-color, #333333);
+  border: 1px solid var(--border-color, #eaeaea);
+}
+
+.video-form-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-color, #333333);
+}
+
+.video-form-card .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.video-form-card label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted, #555555);
+}
+
+.video-form-card input[type="text"],
+.video-form-card textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color, #cccccc);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--bg-main, #fafafa);
+  color: var(--text-color, #333333);
+  transition: border-color 0.3s;
+}
+
+.video-form-card input[type="file"] {
+  width: 100%;
+  padding: 1rem;
+  border: 1px dashed var(--border-color, #cccccc);
+  border-radius: 8px;
+  background: var(--bg-main, #fafafa);
+  cursor: pointer;
+}
+
+.video-form-card input:focus,
+.video-form-card textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submit-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.progress-container {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  background-color: #e0e0e0;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: var(--text-muted, #666666);
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}

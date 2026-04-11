@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
 .home-container {
   max-width: 1000px;
   margin: 40px auto;
@@ -43,6 +45,17 @@
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.home-brand {
+  font-family: "Pacifico", "Segoe Script", "Lucida Handwriting", cursive !important;
+  font-size: 1.07em;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  background: linear-gradient(135deg, #79e8ff 0%, #8f94fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent !important;
+  text-transform: none !important;
 }
 
 .home-hero p {

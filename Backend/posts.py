@@ -36,14 +36,27 @@ def create_posts(user_id):
 @posts_bp.route("/",methods=["GET"])
 def get_posts():
     posts = list(db.posts.find().sort("created_at",-1))
+
+    user_ids = {post.get("user_id") for post in posts if post.get("user_id")}
+    username_map = {}
+
+    for uid in user_ids:
+        try:
+            user = db.users.find_one({"_id": ObjectId(uid)})
+            username_map[uid] = user.get("username") if user else "Unknown"
+        except Exception:
+            username_map[uid] = "Unknown"
+
     result=[]
     for post in posts:
+        post_user_id = post.get("user_id")
         result.append({
             "id":str(post["_id"]),
             "title":post["title"],
             "content":post["content"],
-            "user_id":post["user_id"],
-            "created_at":post.get("created_at")
+            "user_id":post_user_id,
+            "created_at":str(post.get("created_at")),
+            "username" : username_map.get(post_user_id, "Unknown")
         })
         
     

@@ -63,8 +63,21 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          <span className="logo-icon">📚</span>
-          <span className="logo-text">BlogHub</span>
+          <span className="logo-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" className="brand-icon" role="img" focusable="false">
+              <defs>
+                <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#6ee7f9" />
+                  <stop offset="100%" stopColor="#4f46e5" />
+                </linearGradient>
+              </defs>
+              <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#brandGrad)" />
+              <path d="M18 42c3.2-6.5 8.8-9.8 14-9.8S42.8 35.5 46 42" fill="none" stroke="#ffffff" strokeWidth="3.4" strokeLinecap="round" />
+              <circle cx="24" cy="27" r="3.2" fill="#ffffff" />
+              <circle cx="40" cy="27" r="3.2" fill="#ffffff" />
+            </svg>
+          </span>
+          <span className="logo-text">KOMA</span>
         </Link>
 
         <button
@@ -80,12 +93,22 @@ export default function Navbar() {
               Explore
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to="/videos" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+              📺 Videos
+            </Link>
+          </li>
 
           {user ? (
             <>
               <li className="nav-item">
                 <Link to="/create-post" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
                   ✍️ Write
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/upload-video" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  🎬 Upload Video
                 </Link>
               </li>
               <li className="nav-item profile-item">

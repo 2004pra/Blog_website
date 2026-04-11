@@ -63,6 +63,9 @@ export default function PostCard({ post, onDelete }) {
         <h3 className="post-title">{post.title}</h3>
         <p className="post-excerpt">{truncateContent(post.content)}</p>
         <div className="post-meta">
+          <span className="post-author">
+            by {post.username || post.user_id || 'Unknown'}
+          </span>
           <span className="post-date">{formatDate(post.created_at)}</span>
           {post.content.length > 150 && (
             <span 

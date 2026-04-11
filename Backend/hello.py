@@ -3,6 +3,8 @@ import datetime
 import os
 from dotenv import load_dotenv
 from posts import posts_bp
+from videos import videos_bp
+from upload import upload_bp
 load_dotenv()
 from flask import Flask,jsonify
 from flask import request
@@ -25,6 +27,8 @@ CORS(app)  # Enable CORS for all routes
 bcrypt = Bcrypt(app)
 app.register_blueprint(posts_bp,url_prefix="/posts")
 app.register_blueprint(profile_bp)
+app.register_blueprint(videos_bp,url_prefix="/api/videos")
+app.register_blueprint(upload_bp)
 
 
 

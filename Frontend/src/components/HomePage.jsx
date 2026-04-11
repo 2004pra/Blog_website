@@ -49,7 +49,7 @@ export default function HomePage() {
     <div className="home-container">
       {!user && (
         <div className="home-hero">
-          <h1>Welcome to BlogHub</h1>
+          <h1>Welcome to <span className="home-brand">Koma</span></h1>
           <p>Discover stories, ideas, and expertise</p>
           <button className="hero-btn" onClick={() => navigate('/signup')}>
             Start Writing Today
