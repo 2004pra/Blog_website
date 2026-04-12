@@ -16,10 +16,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1rem;
   height: 72px;
+  gap: 14px;
 }
 
 .navbar-logo {
@@ -58,37 +59,46 @@
   text-shadow: 0 0 18px rgba(84, 120, 255, 0.34);
 }
 
-.nav-menu {
+.nav-primary-links {
   display: flex;
   align-items: center;
-  list-style: none;
-  gap: 1.5rem;
+  gap: 1.15rem;
+  margin-left: 8px;
 }
 
 .nav-link {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
   background: none;
-  padding: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
 }
 
 .nav-link:hover {
   color: var(--accent-color);
+  background: rgba(109, 136, 255, 0.12);
 }
 
-.profile-link {
+.nav-right-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   background: var(--input-bg);
-  padding: 6px 16px 6px 6px;
+  padding: 6px 12px 6px 6px;
   border-radius: 999px;
   transition: all 0.2s ease;
 }
 
-.profile-link:hover {
+.profile-chip:hover {
   transform: scale(1.02);
   background: rgba(109, 136, 255, 0.16);
 }
@@ -119,54 +129,122 @@
 .username {
   font-weight: 600;
   color: var(--text-primary);
+  font-size: 0.88rem;
 }
 
-.theme-toggle-btn {
-  background: transparent;
-  color: var(--text-primary);
+.menu-toggle-btn {
+  background: var(--accent-color);
+  color: #fff;
   border: 1px solid var(--border-color);
-  width: 40px;
+  min-width: 74px;
   height: 40px;
-  border-radius: 50%;
+  padding: 0 14px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  margin-left: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
   transition: all 0.2s ease;
 }
 
-.theme-toggle-btn:hover {
-  background: rgba(109, 136, 255, 0.15);
-  transform: rotate(15deg);
+.menu-toggle-btn:hover {
+  background: var(--accent-hover);
 }
 
-.mobile-menu-btn {
-  display: none;
-  background: none;
-  font-size: 1.5rem;
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 10, 24, 0.42);
+  border: 0;
+  border-radius: 0;
+  z-index: 1198;
+}
+
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(88vw, 320px);
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  z-index: 1200;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.side-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
   color: var(--text-primary);
 }
 
+.drawer-close-btn {
+  border: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-link {
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 11px 12px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.drawer-link:hover {
+  background: rgba(109, 136, 255, 0.12);
+  border-color: rgba(109, 136, 255, 0.38);
+}
+
+.drawer-logout-btn {
+  color: #e45757;
+}
+
+.drawer-theme-btn {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
-  .mobile-menu-btn { display: block; }
-  .nav-menu {
-    position: absolute;
-    top: 72px;
-    left: 0;
-    width: 100%;
-    flex-direction: column;
-    background: var(--bg-secondary);
-    padding: 2rem 0;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
+  .navbar-container {
+    height: 66px;
+    padding: 0 0.75rem;
   }
-  .nav-menu.active {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
+
+  .nav-primary-links {
+    display: none;
+  }
+
+  .profile-chip {
+    display: none;
   }
 }

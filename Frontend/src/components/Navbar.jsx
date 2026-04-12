@@ -1,12 +1,13 @@
 import { useContext, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/Navbar.css';
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [character, setCharacter] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [isDark, setIsDark] = useState(false);
@@ -61,8 +62,36 @@ export default function Navbar() {
     logout();
     localStorage.removeItem('profilePicUrl');
     navigate('/');
-    setMobileMenuOpen(false);
+    setDrawerOpen(false);
   };
+
+  const closeDrawer = () => setDrawerOpen(false);
+
+  // Keep drawer behavior stable: close on route changes and ESC, and lock page scroll while open.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!drawerOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setDrawerOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [drawerOpen]);
 
   return (
     <nav className="navbar">
@@ -85,96 +114,81 @@ export default function Navbar() {
           <span className="logo-text">KOMA</span>
         </Link>
 
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          ☰
-        </button>
+        <div className="nav-primary-links">
+          <Link to="/" className="nav-link">Explore</Link>
+          <Link to="/videos" className="nav-link">Videos</Link>
+          <Link to="/about" className="nav-link">About</Link>
+        </div>
 
-        <ul className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`}>
-          <li className="nav-item">
-            <Link to="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-              Explore
+        <div className="nav-right-actions">
+          {user && (
+            <Link to="/profile" className="profile-chip" onClick={closeDrawer}>
+              <div className="avatar-container">
+                {profilePicUrl ? (
+                  <img
+                    src={profilePicUrl}
+                    alt={user.username}
+                    className="avatar-img"
+                    onError={() => setProfilePicUrl('')}
+                  />
+                ) : character?.image ? (
+                  <img
+                    src={character.image}
+                    alt={user.username}
+                    className="avatar-img"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="avatar-placeholder">👤</div>
+                )}
+              </div>
+              <span className="username">{user.username}</span>
             </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/videos" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-              📺 Videos
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/about" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-              📘 About & Docs
-            </Link>
-          </li>
+          )}
 
+          <button
+            className="menu-toggle-btn"
+            onClick={() => setDrawerOpen((prev) => !prev)}
+            aria-label="Open quick menu"
+            aria-expanded={drawerOpen}
+          >
+            Menu
+          </button>
+        </div>
+      </div>
+
+      {drawerOpen && <button className="drawer-backdrop" onClick={closeDrawer} aria-label="Close menu" />}
+
+      <aside className={`side-drawer ${drawerOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <h3>Quick Actions</h3>
+          <button className="drawer-close-btn" onClick={closeDrawer} aria-label="Close menu">×</button>
+        </div>
+
+        <div className="drawer-links">
           {user ? (
             <>
-              <li className="nav-item">
-                <Link to="/create-post" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  ✍️ Write
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/upload-video" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  🎬 Upload Video
-                </Link>
-              </li>
-              <li className="nav-item profile-item">
-                <Link to="/profile" className="profile-link" onClick={() => setMobileMenuOpen(false)}>
-                  <div className="avatar-container">
-                    {profilePicUrl ? (
-                      <img
-                        src={profilePicUrl}
-                        alt={user.username}
-                        className="avatar-img"
-                        onError={() => setProfilePicUrl('')}
-                      />
-                    ) : character?.image ? (
-                      <img 
-                        src={character.image} 
-                        alt={user.username} 
-                        className="avatar-img"
-                        onError={(e) => {
-                          console.error('Failed to load avatar image');
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div className="avatar-placeholder">👤</div>
-                    )}
-                  </div>
-                  <span className="username">{user.username}</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <button className="nav-link logout-btn" onClick={handleLogout}>
-                  Logout
-                </button>
-              </li>
+              <Link to="/create-post" className="drawer-link" onClick={closeDrawer}>✍️ Create Post</Link>
+              <Link to="/upload-video" className="drawer-link" onClick={closeDrawer}>🎬 Upload Video</Link>
+              <Link to="/profile" className="drawer-link" onClick={closeDrawer}>👤 Profile</Link>
+              <button className="drawer-link drawer-theme-btn" onClick={toggleTheme}>
+                {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+              </button>
+              <button className="drawer-link drawer-logout-btn" onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <>
-              <li className="nav-item">
-                <Link to="/login" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  Sign In
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/signup" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
-                  Get Started
-                </Link>
-              </li>
+              <Link to="/login" className="drawer-link" onClick={closeDrawer}>Sign In</Link>
+              <Link to="/signup" className="drawer-link" onClick={closeDrawer}>Get Started</Link>
+              <button className="drawer-link drawer-theme-btn" onClick={toggleTheme}>
+                {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+              </button>
             </>
           )}
-          <li className="nav-item theme-link">
-            <button className="theme-toggle-btn" onClick={toggleTheme} aria-label="Toggle theme">
-              {isDark ? '☀️' : '🌙'}
-            </button>
-          </li>
-        </ul>
-      </div>
+        </div>
+      </aside>
     </nav>
   );
 }

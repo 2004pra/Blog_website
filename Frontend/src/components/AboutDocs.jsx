@@ -10,6 +10,17 @@ export default function AboutDocs() {
           Koma is a social platform for sharing thoughts through written posts and video blogs.
           It is currently evolving, and some social features are still in progress.
         </p>
+        <p>
+          Created by Prashant Mishra  GitHub:{' '}
+          <a
+            className="aboutdocs-mail-link"
+            href="https://github.com/2004pra"
+            target="_blank"
+            rel="noreferrer"
+          >
+            github.com/2004pra
+          </a>
+        </p>
       </header>
 
       <section className="aboutdocs-grid" aria-label="Platform documentation sections">
@@ -54,6 +65,21 @@ export default function AboutDocs() {
             <li>Stronger moderation and reporting workflow</li>
             <li>More profile and community discovery features</li>
             <li>Policy pages with finalized legal text</li>
+          </ul>
+        </article>
+
+        <article className="aboutdocs-card">
+          <h2>Contact And Reporting</h2>
+          <ul>
+            <li>
+              Report suspicious content or behavior:{' '}
+              <a className="aboutdocs-mail-link" href="mailto:support@koma.app">support@koma.app</a>
+            </li>
+            <li>
+              Business and partnership inquiries:{' '}
+              <a className="aboutdocs-mail-link" href="mailto:prashant37364@gmail.com">prashant37364@gmail.com</a>
+            </li>
+            <li>Use clear subject lines and include relevant links/screenshots when reporting.</li>
           </ul>
         </article>
       </section>

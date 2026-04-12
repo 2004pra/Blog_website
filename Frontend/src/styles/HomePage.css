@@ -227,6 +227,15 @@
   line-height: 1.5;
 }
 
+.footer-mail-link {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.footer-mail-link:hover {
+  text-decoration: underline;
+}
+
 .explore-footer-right {
   max-width: 390px;
 }

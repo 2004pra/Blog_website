@@ -68,6 +68,15 @@
   line-height: 1.5;
 }
 
+.aboutdocs-mail-link {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.aboutdocs-mail-link:hover {
+  text-decoration: underline;
+}
+
 .aboutdocs-footer {
   margin-top: 16px;
   padding: 14px 4px 0;

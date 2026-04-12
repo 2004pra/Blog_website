@@ -126,6 +126,14 @@ export default function HomePage() {
         </div>
         <div className="explore-footer-right">
           <p>Coming soon: Followers, Following, and richer social connections.</p>
+          <p>
+            Report suspicious activity:{' '}
+            <a className="footer-mail-link" href="mailto:support@koma.app">support@koma.app</a>
+          </p>
+          <p>
+            Business inquiries:{' '}
+            <a className="footer-mail-link" href="mailto:prashant37364@gmail.com">prashant37364@gmail.com</a>
+          </p>
           <p className="explore-footer-note">Built with consistency, patience, and learning by doing.</p>
         </div>
       </footer>

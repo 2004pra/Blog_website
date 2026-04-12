@@ -443,6 +443,7 @@ export default function VideoFeed() {
   const [videos, setVideos] = useState([]); // Will hold the array of video objects from MongoDB
   const [loading, setLoading] = useState(true); // Shows "Loading..." initially
   const [error, setError] = useState(null); // Catches network errors
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeVideoId, setActiveVideoId] = useState(null);
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [likesById, setLikesById] = useState({});
@@ -710,21 +711,40 @@ export default function VideoFeed() {
     }
   };
 
-  const focusedVideo = videos.find((video) => extractVideoId(video) === playingVideoId) || null;
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredVideos = videos.filter((video) => {
+    if (!normalizedQuery) return true;
+
+    const haystack = `${video.title || ''} ${video.description || ''} ${video.username || ''}`
+      .toLowerCase();
+    return haystack.includes(normalizedQuery);
+  });
+
+  const focusedVideo = filteredVideos.find((video) => extractVideoId(video) === playingVideoId) || null;
   const sidebarVideos = focusedVideo
-    ? videos.filter((video) => extractVideoId(video) !== extractVideoId(focusedVideo))
-    : videos;
+    ? filteredVideos.filter((video) => extractVideoId(video) !== extractVideoId(focusedVideo))
+    : filteredVideos;
 
   return (
     <div className="video-feed-container">
       <div className="video-feed-header">
-        <h1>Dashboard</h1>
-        <p>{videos.length} videos</p>
+        <div className="video-feed-header-copy">
+          <h1>Search Videos</h1>
+          <p>{filteredVideos.length} of {videos.length} videos</p>
+        </div>
+        <input
+          type="search"
+          className="video-search-input"
+          placeholder="Search by title, description, or creator"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          aria-label="Search videos"
+        />
       </div>
 
-      {videos.length === 0 ? (
+      {filteredVideos.length === 0 ? (
         <div className="no-videos">
-          <p>No video blogs have been uploaded yet.</p>
+          <p>{videos.length === 0 ? 'No video blogs have been uploaded yet.' : 'No videos match your search yet.'}</p>
         </div>
       ) : focusedVideo ? (
         <div className="video-focus-layout">
@@ -789,7 +809,7 @@ export default function VideoFeed() {
         </div>
       ) : (
         <div className="video-grid">
-          {videos.map((video) => {
+          {filteredVideos.map((video) => {
             const videoId = extractVideoId(video);
             const videoKey = videoId || video.video_url;
             return (

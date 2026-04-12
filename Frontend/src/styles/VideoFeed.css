@@ -10,9 +10,14 @@
 .video-feed-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  gap: 12px;
   margin: 0 0 18px;
   padding: 0 6px;
+}
+
+.video-feed-header-copy {
+  min-width: 0;
 }
 
 .video-feed-header h1 {
@@ -26,6 +31,26 @@
   margin: 0;
   color: #9f9f9f;
   font-size: 0.9rem;
+}
+
+.video-search-input {
+  width: min(420px, 55vw);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f1f1;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+}
+
+.video-search-input::placeholder {
+  color: #a3a3a3;
+}
+
+.video-search-input:focus {
+  outline: none;
+  border-color: #7ac9ff;
+  box-shadow: 0 0 0 3px rgba(122, 201, 255, 0.2);
 }
 
 .video-feed-loading,
@@ -564,8 +589,12 @@
 
   .video-feed-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .video-search-input {
+    width: 100%;
   }
 
   .video-grid {
