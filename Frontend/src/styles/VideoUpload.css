@@ -8,18 +8,18 @@
 .video-form-card {
   width: 100%;
   max-width: 600px;
-  background: var(--bg-card, #ffffff);
+  background: var(--bg-secondary, #ffffff);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: var(--text-color, #333333);
+  color: var(--text-primary, #333333);
   border: 1px solid var(--border-color, #eaeaea);
 }
 
 .video-form-card h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: var(--text-color, #333333);
+  color: var(--text-primary, #333333);
 }
 
 .video-form-card .form-group {
@@ -30,7 +30,7 @@
   display: block;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--text-muted, #555555);
+  color: var(--text-secondary, #555555);
 }
 
 .video-form-card input[type="text"],
@@ -40,24 +40,61 @@
   border: 1px solid var(--border-color, #cccccc);
   border-radius: 8px;
   font-size: 1rem;
-  background: var(--bg-main, #fafafa);
-  color: var(--text-color, #333333);
+  background: var(--input-bg, #fafafa);
+  color: var(--text-primary, #333333);
   transition: border-color 0.3s;
 }
 
+.video-form-card textarea {
+  min-height: 120px;
+  line-height: 1.5;
+  resize: vertical;
+  caret-color: var(--accent-color, #007bff);
+}
+
+.video-form-card textarea::placeholder,
+.video-form-card input[type="text"]::placeholder {
+  color: var(--text-secondary, #777777);
+}
+
 .video-form-card input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.file-input-label {
   width: 100%;
-  padding: 1rem;
+  padding: 0.9rem 1rem;
   border: 1px dashed var(--border-color, #cccccc);
   border-radius: 8px;
-  background: var(--bg-main, #fafafa);
+  background: var(--input-bg, #fafafa);
   cursor: pointer;
+  color: var(--text-primary, #333333);
+  text-align: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.file-input-label:hover {
+  border-color: var(--accent-color, #007bff);
+}
+
+.selected-file-name {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666666);
+  word-break: break-word;
 }
 
 .video-form-card input:focus,
 .video-form-card textarea:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: var(--accent-color, #007bff);
 }
 
 .submit-btn {
@@ -104,7 +141,7 @@
 
 .progress-text {
   font-size: 0.9rem;
-  color: var(--text-muted, #666666);
+  color: var(--text-secondary, #666666);
 }
 
 .error-message {

@@ -172,6 +172,29 @@
   line-height: 1.35;
 }
 
+.video-description {
+  margin: 2px 0 6px;
+  color: #d4d4d4;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.description-toggle {
+  border: 0;
+  background: transparent;
+  color: #79b8ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.description-toggle:hover {
+  color: #a7d0ff;
+  text-decoration: underline;
+}
+
 .share-btn {
   margin-left: auto;
   border: 0;

@@ -16,6 +16,7 @@ function VideoCard({ video, onShare }) {
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const thumbnailUrl = video.video_url.replace(/\.[^/.]+$/, '.jpg');
   const avatarColors = [
@@ -24,6 +25,12 @@ function VideoCard({ video, onShare }) {
   ];
   const username = video.username || video.user_id || 'Anonymous';
   const avatarColor = avatarColors[username.length % avatarColors.length];
+  const descriptionText = (video.description || '').trim();
+  const shouldTruncateDescription = descriptionText.length > 110;
+  const displayedDescription =
+    showFullDescription || !shouldTruncateDescription
+      ? descriptionText
+      : `${descriptionText.slice(0, 110)}...`;
 
   const togglePlay = async () => {
     const el = videoRef.current;
@@ -139,6 +146,21 @@ function VideoCard({ video, onShare }) {
         <div className="video-details-text">
           <h3 className="video-title" title={video.title}>{video.title}</h3>
           <p className="channel-name">{username}</p>
+          {descriptionText && (
+            <p className="video-description">
+              {displayedDescription}{' '}
+              {shouldTruncateDescription && (
+                <button
+                  type="button"
+                  className="description-toggle"
+                  onClick={() => setShowFullDescription((prev) => !prev)}
+                  aria-label={showFullDescription ? 'Show less description' : 'Show full description'}
+                >
+                  {showFullDescription ? 'less' : 'more'}
+                </button>
+              )}
+            </p>
+          )}
           <p className="video-meta">
             <span>{Math.floor(Math.random() * 900) + 10}K views</span>
             <span>&nbsp;•&nbsp;</span>

@@ -12,6 +12,7 @@ export default function VideoUpload() {
   const [loading, setLoading] = useState(false); // Disables buttons while uploading
   const [progress, setProgress] = useState(0); // Tracks upload percentage (0 to 100)
   const [error, setError] = useState(''); // Stores any error messages
+  const [selectedFileName, setSelectedFileName] = useState(''); // Shows selected file name in UI
   
   // 2. Getting Context & Navigation
   const { user, token } = useContext(AuthContext); // Get the logged-in user and their auth token
@@ -33,10 +34,12 @@ export default function VideoUpload() {
     if (file && !file.type.startsWith('video/')) {
       setError('Please select a valid video file.');
       setVideoFile(null);
+      setSelectedFileName('');
       e.target.value = null; // reset input
       return;
     }
     setVideoFile(file); // Save file to state
+    setSelectedFileName(file ? file.name : '');
   };
 
   // The Main Upload Logic
@@ -168,13 +171,20 @@ export default function VideoUpload() {
 
           <div className="form-group">
             <label>Video File</label>
+            <label className="file-input-label" htmlFor="video-upload-input">
+              {selectedFileName ? 'Change file' : 'Choose video file'}
+            </label>
             <input
+              id="video-upload-input"
               type="file"
               accept="video/*"
               onChange={handleFileChange}
               disabled={loading}
               required
             />
+            <p className="selected-file-name">
+              {selectedFileName || 'No file selected'}
+            </p>
           </div>
 
           {loading && (
