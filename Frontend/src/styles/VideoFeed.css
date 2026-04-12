@@ -195,7 +195,7 @@
 .menu-popover {
   position: absolute;
   right: 0;
-  top: calc(100% + 6px);
+  bottom: calc(100% + 6px);
   width: 174px;
   background: rgba(22, 22, 22, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.18);

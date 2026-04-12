@@ -23,7 +23,7 @@ function buildQualityUrl(url, quality) {
   return url.replace('/upload/', '/upload/q_auto:eco,f_auto,w_854,c_limit/');
 }
 
-function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
+function VideoCard({ video, videoKey, onShare, activeVideoId, onPlayStart }) {
   const videoRef = useRef(null);
   const wrapperRef = useRef(null);
   const menuRef = useRef(null);
@@ -48,14 +48,14 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
   const descriptionText = (video.description || '').trim();
 
   useEffect(() => {
-    if (activeVideoId !== (video.id || video._id)) {
+    if (activeVideoId !== videoKey) {
       const el = videoRef.current;
       if (el && !el.paused) {
         el.pause();
       }
       setIsPlaying(false);
     }
-  }, [activeVideoId, video.id, video._id]);
+  }, [activeVideoId, videoKey]);
 
   useEffect(() => {
     const closeMenuOnOutsideClick = (event) => {
@@ -88,7 +88,7 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
     if (!el) return;
     if (el.paused) {
       await el.play();
-      onPlayStart(video.id || video._id);
+      onPlayStart(videoKey);
       setIsPlaying(true);
       setSeekHint('▶');
     } else {
@@ -111,7 +111,7 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
     const target = Math.max(0, Math.min(el.currentTime + seconds, duration || el.duration || 0));
     el.currentTime = target;
     setCurrentTime(target);
-    setSeekHint(seconds > 0 ? '⏩ 10s' : '⏪ 10s');
+    setSeekHint(seconds > 0 ? '⏩ 5s' : '⏪ 5s');
   };
 
   const onSeek = (event) => {
@@ -132,15 +132,34 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
   const onPlayerKeyDown = (event) => {
     if (event.key === 'ArrowRight') {
       event.preventDefault();
-      skipBy(10);
+      skipBy(5);
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
-      skipBy(-10);
+      skipBy(-5);
     } else if (event.key === ' ') {
       event.preventDefault();
       togglePlay();
     }
   };
+
+  useEffect(() => {
+    const onWindowKeyDown = (event) => {
+      if (activeVideoId !== videoKey) return;
+      const tagName = (event.target && event.target.tagName) || '';
+      if (tagName === 'INPUT' || tagName === 'TEXTAREA') return;
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        skipBy(5);
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        skipBy(-5);
+      }
+    };
+
+    window.addEventListener('keydown', onWindowKeyDown);
+    return () => window.removeEventListener('keydown', onWindowKeyDown);
+  }, [activeVideoId, videoKey]);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
@@ -158,12 +177,19 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
           className="video-player"
           onClick={togglePlay}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
-          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime || 0)}
+          onTimeUpdate={(e) => {
+            if (!e.currentTarget.paused) {
+              setCurrentTime(e.currentTarget.currentTime || 0);
+            }
+          }}
           onPlay={() => {
-            onPlayStart(video.id || video._id);
+            onPlayStart(videoKey);
             setIsPlaying(true);
           }}
-          onPause={() => setIsPlaying(false)}
+          onPause={(e) => {
+            setIsPlaying(false);
+            setCurrentTime(e.currentTarget.currentTime || 0);
+          }}
           onEnded={() => setIsPlaying(false)}
         />
 
@@ -200,11 +226,11 @@ function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
               </button>
               {isFullscreen && (
                 <>
-                  <button type="button" className="ctrl-btn" onClick={() => skipBy(-10)}>
-                    ⏪ 10s
+                  <button type="button" className="ctrl-btn" onClick={() => skipBy(-5)}>
+                    ⏪ 5s
                   </button>
-                  <button type="button" className="ctrl-btn" onClick={() => skipBy(10)}>
-                    10s ⏩
+                  <button type="button" className="ctrl-btn" onClick={() => skipBy(5)}>
+                    5s ⏩
                   </button>
                 </>
               )}
@@ -363,15 +389,19 @@ export default function VideoFeed() {
         </div>
       ) : (
         <div className="video-grid">
-          {videos.map((video) => (
+          {videos.map((video) => {
+            const videoKey = video.id || video._id || video.video_url;
+            return (
             <VideoCard
-              key={video.id || video._id}
+              key={videoKey}
               video={video}
+              videoKey={videoKey}
               onShare={handleShare}
               activeVideoId={activeVideoId}
               onPlayStart={setActiveVideoId}
             />
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
