@@ -75,8 +75,60 @@
 
 .post-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
   justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.post-action-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.post-action-edit {
+  background-color: #667eea;
+}
+
+.post-action-edit:hover {
+  background-color: #764ba2;
+}
+
+.post-action-delete {
+  background-color: #ef5350;
+}
+
+.post-action-delete:hover {
+  background-color: #c62828;
+}
+
+@media (max-width: 640px) {
+  .post-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .post-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .post-excerpt {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+
+  .post-actions {
+    justify-content: stretch;
+  }
+
+  .post-action-btn {
+    flex: 1;
+    min-width: 0;
+  }
 }

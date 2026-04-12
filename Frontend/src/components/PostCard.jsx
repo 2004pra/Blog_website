@@ -83,45 +83,16 @@ export default function PostCard({ post, onDelete }) {
       </div>
       
       {isOwnPost && (
-        <div className="post-actions" style={{
-          padding: '1rem 2rem 0',
-          display: 'flex',
-          gap: '0.5rem',
-          borderTop: '1px solid #f0f0f0',
-        }}>
+        <div className="post-actions">
           <button
             onClick={handleEdit}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#667eea',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '500',
-              transition: 'background-color 0.3s ease',
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#764ba2'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#667eea'}
+            className="post-action-btn post-action-edit"
           >
             Edit
           </button>
           <button
             onClick={handleDelete}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#ef5350',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '500',
-              transition: 'background-color 0.3s ease',
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#c62828'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#ef5350'}
+            className="post-action-btn post-action-delete"
           >
             Delete
           </button>

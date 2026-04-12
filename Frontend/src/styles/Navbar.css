@@ -304,6 +304,7 @@
   .navbar-container {
     height: 66px;
     padding: 0 0.75rem;
+    gap: 8px;
   }
 
   .nav-primary-links {
@@ -322,15 +323,19 @@
     width: min(92vw, 340px);
     padding: 14px;
   }
-
-  .create-toggle-btn {
-    min-width: 84px;
-    height: 36px;
-    font-size: 0.85rem;
-  }
 }
 
 @media (max-width: 420px) {
+  .logo-text {
+    font-size: 0.98rem;
+    letter-spacing: 0.08em;
+  }
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+  }
+
   .menu-toggle-btn {
     min-width: 66px;
     height: 36px;
@@ -341,5 +346,11 @@
   .drawer-link {
     padding: 10px 10px;
     font-size: 0.88rem;
+  }
+
+  .side-drawer {
+    width: 100vw;
+    max-width: 100vw;
+    border-left: 0;
   }
 }
