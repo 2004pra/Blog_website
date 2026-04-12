@@ -27,9 +27,7 @@ export default function Profile() {
     }
 
     const savedProfilePic = localStorage.getItem('profilePicUrl');
-    if (savedProfilePic) {
-      setProfilePicUrl(savedProfilePic);
-    }
+    setProfilePicUrl(user.profile_pic_url || savedProfilePic || '');
     
     // Load anime character from localStorage
     const userCharacter = localStorage.getItem('userCharacter');

@@ -44,10 +44,12 @@ def createVideo(user_id):
 @videos_bp.route("/",methods=["GET"])
 def get_video():
     videos = list(db.videos.find().sort("created_at",-1))
-
+    comments = list(db.comments.find().sort("created_at",-1))
     user_ids = {video.get("user_id") for video in videos if video.get("user_id")}
     username_map = {}
     profile_pic_map = {}
+    
+        
 
     for uid in user_ids:
         try:
@@ -81,6 +83,77 @@ def get_video():
         
     return jsonify(result)
 
+
+#comments
+@videos_bp.route("/comment/<video_id>",methods=["POST"])
+@token_required
+def comment(user_id,video_id):
+    data = request.get_json()
+    comment = data.get("comment")
+    video_url = db.videos.find_one({"_id":ObjectId(video_id)})
+    if not video_url:
+        return jsonify({"error":"No video found"}),404
+    
+    if not comment:
+        return jsonify({"error":"comment is empty"}),400
+    
+    db.comments.insert_one({
+        "comment":comment,
+        "user_id":user_id,
+        "video_id":video_id,
+        "created_at": datetime.utcnow()
+    })
+    
+    return jsonify({"message":"comment done successfully!"})
+    
+    
+   
+   
+#comment data send to frontend
+
+@videos_bp.route("/comment/<video_id>",methods=["GET"])
+@token_required
+def comment_send(user_id, video_id):
+    try:
+        object_id = ObjectId(video_id)
+    except InvalidId:
+        return jsonify({"error": "Invalid video id"}), 400
+
+    video = db.videos.find_one({"_id": object_id})
+    if not video:
+        return jsonify({"error": "No video found"}), 404
+
+    comments = list(db.comments.find({"video_id": video_id}).sort("created_at", -1))
+    if not comments:
+        return jsonify([]), 200
+
+    comment_user_ids = {comment.get("user_id") for comment in comments if comment.get("user_id")}
+    username_map = {}
+
+    for uid in comment_user_ids:
+        try:
+            user = db.users.find_one({"_id": ObjectId(uid)})
+            username_map[uid] = user.get("username") if user else "Unknown"
+        except Exception:
+            username_map[uid] = "Unknown"
+
+    all_comments = []
+    for comment in comments:
+        comment_user_id = comment.get("user_id")
+        all_comments.append({
+            "id": str(comment.get("_id")),
+            "comment": comment.get("comment", ""),
+            "user_id": comment_user_id,
+            "username": username_map.get(comment_user_id, "Unknown"),
+            "video_id": comment.get("video_id"),
+            "created_at": str(comment.get("created_at"))
+        })
+
+    return jsonify(all_comments), 200
+    
+    
+    
+    
 
 @videos_bp.route("/delete/<video_id>",methods=["DELETE"])
 @token_required

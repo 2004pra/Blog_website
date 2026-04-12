@@ -28,7 +28,29 @@ function extractVideoId(video) {
   return video?.id || video?._id || '';
 }
 
-function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onShare, activeVideoId, onPlayStart }) {
+function VideoCard({
+  video,
+  videoKey,
+  likesCount,
+  isLiked,
+  isLiking,
+  onLike,
+  onShare,
+  activeVideoId,
+  onPlayStart,
+  comments,
+  commentsOpen,
+  commentsLoading,
+  commentsError,
+  commentValue,
+  isCommentSubmitting,
+  onToggleComments,
+  onCommentChange,
+  onCommentSubmit,
+  onPlaybackChange,
+  forceCommentsVisible = false,
+  layoutMode = 'grid'
+}) {
   const videoRef = useRef(null);
   const wrapperRef = useRef(null);
   const menuRef = useRef(null);
@@ -52,6 +74,8 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
   const avatarColor = avatarColors[username.length % avatarColors.length];
   const descriptionText = (video.description || '').trim();
   const [avatarError, setAvatarError] = useState(false);
+  const commentCount = Array.isArray(comments) ? comments.length : 0;
+  const shouldShowComments = layoutMode !== 'sidebar' && (forceCommentsVisible || commentsOpen);
 
   useEffect(() => {
     if (activeVideoId !== videoKey) {
@@ -170,7 +194,7 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="video-card">
+    <div className={`video-card video-card--${layoutMode}`}>
       <div className="video-wrapper" ref={wrapperRef} tabIndex={0} onKeyDown={onPlayerKeyDown}>
         <video
           ref={videoRef}
@@ -190,13 +214,18 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
           }}
           onPlay={() => {
             onPlayStart(videoKey);
+            onPlaybackChange?.(videoKey, true);
             setIsPlaying(true);
           }}
           onPause={(e) => {
+            onPlaybackChange?.(videoKey, false);
             setIsPlaying(false);
             setCurrentTime(e.currentTarget.currentTime || 0);
           }}
-          onEnded={() => setIsPlaying(false)}
+          onEnded={() => {
+            onPlaybackChange?.(videoKey, false);
+            setIsPlaying(false);
+          }}
         />
 
         {!isPlaying && <div className="center-play-icon">▶</div>}
@@ -347,7 +376,62 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
               <span className="video-like-icon">♥</span>
               <span className="video-like-count">{likesCount}</span>
             </button>
+            <button
+              type="button"
+              className={`video-comment-btn ${commentsOpen ? 'active' : ''}`}
+              onClick={() => onToggleComments(extractVideoId(video))}
+              aria-label="Open comments"
+              title="Comments"
+            >
+              <span className="video-comment-icon">💬</span>
+              <span className="video-comment-count">{commentCount}</span>
+            </button>
           </div>
+
+          {shouldShowComments && (
+            <div className="video-comments-panel">
+              {commentsLoading ? (
+                <p className="video-comments-state">Loading comments...</p>
+              ) : commentsError ? (
+                <p className="video-comments-state error">{commentsError}</p>
+              ) : comments && comments.length > 0 ? (
+                <div className="video-comments-list">
+                  {comments.map((item) => (
+                    <div className="video-comment-item" key={item.id || `${item.user_id}-${item.created_at}`}>
+                      <p className="video-comment-author">{item.username || 'Unknown'}</p>
+                      <p className="video-comment-text">{item.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="video-comments-state">No comments yet.</p>
+              )}
+
+              <form
+                className="video-comment-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  onCommentSubmit(extractVideoId(video));
+                }}
+              >
+                <input
+                  type="text"
+                  className="video-comment-input"
+                  value={commentValue}
+                  onChange={(event) => onCommentChange(extractVideoId(video), event.target.value)}
+                  placeholder="Write a comment..."
+                  maxLength={300}
+                />
+                <button
+                  type="submit"
+                  className="video-comment-send"
+                  disabled={isCommentSubmitting || !commentValue.trim()}
+                >
+                  {isCommentSubmitting ? 'Posting...' : 'Post'}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -360,9 +444,16 @@ export default function VideoFeed() {
   const [loading, setLoading] = useState(true); // Shows "Loading..." initially
   const [error, setError] = useState(null); // Catches network errors
   const [activeVideoId, setActiveVideoId] = useState(null);
+  const [playingVideoId, setPlayingVideoId] = useState(null);
   const [likesById, setLikesById] = useState({});
   const [likedById, setLikedById] = useState({});
   const [likeInFlight, setLikeInFlight] = useState({});
+  const [commentsById, setCommentsById] = useState({});
+  const [commentsOpenById, setCommentsOpenById] = useState({});
+  const [commentsLoadingById, setCommentsLoadingById] = useState({});
+  const [commentErrorById, setCommentErrorById] = useState({});
+  const [commentInputById, setCommentInputById] = useState({});
+  const [commentSubmittingById, setCommentSubmittingById] = useState({});
   const { token } = useContext(AuthContext);
 
   // Run exactly once when the component first loads
@@ -484,6 +575,121 @@ export default function VideoFeed() {
     }
   };
 
+  const fetchCommentsForVideo = async (videoId) => {
+    if (!videoId) return;
+
+    if (!token) {
+      setCommentErrorById((prev) => ({ ...prev, [videoId]: 'Login required to view comments.' }));
+      setCommentsById((prev) => ({ ...prev, [videoId]: [] }));
+      return;
+    }
+
+    setCommentsLoadingById((prev) => ({ ...prev, [videoId]: true }));
+    setCommentErrorById((prev) => ({ ...prev, [videoId]: '' }));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/videos/comment/${videoId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Login required to view comments.');
+        }
+        throw new Error('Could not load comments.');
+      }
+
+      const data = await response.json();
+      setCommentsById((prev) => ({ ...prev, [videoId]: Array.isArray(data) ? data : [] }));
+    } catch (err) {
+      setCommentErrorById((prev) => ({
+        ...prev,
+        [videoId]: err.message || 'Could not load comments.'
+      }));
+    } finally {
+      setCommentsLoadingById((prev) => ({ ...prev, [videoId]: false }));
+    }
+  };
+
+  const handleToggleComments = async (videoId) => {
+    if (!videoId) return;
+
+    const isOpen = Boolean(commentsOpenById[videoId]);
+    setCommentsOpenById((prev) => ({ ...prev, [videoId]: !isOpen }));
+
+    if (!isOpen && commentsById[videoId] === undefined) {
+      await fetchCommentsForVideo(videoId);
+    }
+  };
+
+  const handleCommentInputChange = (videoId, value) => {
+    setCommentInputById((prev) => ({ ...prev, [videoId]: value }));
+  };
+
+  const handleCommentSubmit = async (videoId) => {
+    if (!videoId) return;
+
+    const rawComment = commentInputById[videoId] || '';
+    const text = rawComment.trim();
+
+    if (!text) return;
+
+    if (!token) {
+      alert('Please login to comment.');
+      return;
+    }
+
+    if (commentSubmittingById[videoId]) return;
+
+    setCommentSubmittingById((prev) => ({ ...prev, [videoId]: true }));
+    setCommentErrorById((prev) => ({ ...prev, [videoId]: '' }));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/videos/comment/${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ comment: text })
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || 'Could not post comment.');
+      }
+
+      setCommentInputById((prev) => ({ ...prev, [videoId]: '' }));
+      await fetchCommentsForVideo(videoId);
+    } catch (err) {
+      setCommentErrorById((prev) => ({
+        ...prev,
+        [videoId]: err.message || 'Could not post comment.'
+      }));
+    } finally {
+      setCommentSubmittingById((prev) => ({ ...prev, [videoId]: false }));
+    }
+  };
+
+  const handlePlaybackChange = async (videoId, isPlaying) => {
+    if (!videoId) return;
+
+    if (isPlaying) {
+      setActiveVideoId(videoId);
+      setPlayingVideoId(videoId);
+      setCommentsOpenById((prev) => ({ ...prev, [videoId]: true }));
+
+      if (commentsById[videoId] === undefined) {
+        await fetchCommentsForVideo(videoId);
+      }
+      return;
+    }
+
+    setPlayingVideoId((prev) => (prev === videoId ? null : prev));
+  };
+
   // 1. Handle UI state when waiting for the network
   if (loading) {
     return <div className="video-feed-loading">Loading Videos...</div>;
@@ -504,6 +710,11 @@ export default function VideoFeed() {
     }
   };
 
+  const focusedVideo = videos.find((video) => extractVideoId(video) === playingVideoId) || null;
+  const sidebarVideos = focusedVideo
+    ? videos.filter((video) => extractVideoId(video) !== extractVideoId(focusedVideo))
+    : videos;
+
   return (
     <div className="video-feed-container">
       <div className="video-feed-header">
@@ -515,22 +726,94 @@ export default function VideoFeed() {
         <div className="no-videos">
           <p>No video blogs have been uploaded yet.</p>
         </div>
+      ) : focusedVideo ? (
+        <div className="video-focus-layout">
+          <div className="video-focus-main">
+            <VideoCard
+              key={extractVideoId(focusedVideo) || focusedVideo.video_url}
+              video={focusedVideo}
+              videoKey={extractVideoId(focusedVideo) || focusedVideo.video_url}
+              likesCount={Number(likesById[extractVideoId(focusedVideo)] ?? 0)}
+              isLiked={Boolean(likedById[extractVideoId(focusedVideo)])}
+              isLiking={Boolean(likeInFlight[extractVideoId(focusedVideo)])}
+              onLike={handleLike}
+              onShare={handleShare}
+              activeVideoId={activeVideoId}
+              onPlayStart={setActiveVideoId}
+              comments={commentsById[extractVideoId(focusedVideo)] || []}
+              commentsOpen={Boolean(commentsOpenById[extractVideoId(focusedVideo)])}
+              commentsLoading={Boolean(commentsLoadingById[extractVideoId(focusedVideo)])}
+              commentsError={commentErrorById[extractVideoId(focusedVideo)] || ''}
+              commentValue={commentInputById[extractVideoId(focusedVideo)] || ''}
+              isCommentSubmitting={Boolean(commentSubmittingById[extractVideoId(focusedVideo)])}
+              onToggleComments={handleToggleComments}
+              onCommentChange={handleCommentInputChange}
+              onCommentSubmit={handleCommentSubmit}
+              onPlaybackChange={handlePlaybackChange}
+              forceCommentsVisible
+              layoutMode="focused"
+            />
+          </div>
+
+          <div className="video-focus-sidebar">
+            {sidebarVideos.map((video) => {
+              const videoId = extractVideoId(video);
+              const videoKey = videoId || video.video_url;
+              return (
+                <VideoCard
+                  key={videoKey}
+                  video={video}
+                  videoKey={videoKey}
+                  likesCount={Number(likesById[videoId] ?? 0)}
+                  isLiked={Boolean(likedById[videoId])}
+                  isLiking={Boolean(likeInFlight[videoId])}
+                  onLike={handleLike}
+                  onShare={handleShare}
+                  activeVideoId={activeVideoId}
+                  onPlayStart={setActiveVideoId}
+                  comments={commentsById[videoId] || []}
+                  commentsOpen={false}
+                  commentsLoading={Boolean(commentsLoadingById[videoId])}
+                  commentsError={commentErrorById[videoId] || ''}
+                  commentValue={commentInputById[videoId] || ''}
+                  isCommentSubmitting={Boolean(commentSubmittingById[videoId])}
+                  onToggleComments={handleToggleComments}
+                  onCommentChange={handleCommentInputChange}
+                  onCommentSubmit={handleCommentSubmit}
+                  onPlaybackChange={handlePlaybackChange}
+                  layoutMode="sidebar"
+                />
+              );
+            })}
+          </div>
+        </div>
       ) : (
         <div className="video-grid">
           {videos.map((video) => {
-            const videoKey = video.id || video._id || video.video_url;
+            const videoId = extractVideoId(video);
+            const videoKey = videoId || video.video_url;
             return (
             <VideoCard
               key={videoKey}
               video={video}
               videoKey={videoKey}
-              likesCount={Number(likesById[extractVideoId(video)] ?? 0)}
-              isLiked={Boolean(likedById[extractVideoId(video)])}
-              isLiking={Boolean(likeInFlight[extractVideoId(video)])}
+              likesCount={Number(likesById[videoId] ?? 0)}
+              isLiked={Boolean(likedById[videoId])}
+              isLiking={Boolean(likeInFlight[videoId])}
               onLike={handleLike}
               onShare={handleShare}
               activeVideoId={activeVideoId}
               onPlayStart={setActiveVideoId}
+              comments={commentsById[videoId] || []}
+              commentsOpen={Boolean(commentsOpenById[videoId])}
+              commentsLoading={Boolean(commentsLoadingById[videoId])}
+              commentsError={commentErrorById[videoId] || ''}
+              commentValue={commentInputById[videoId] || ''}
+              isCommentSubmitting={Boolean(commentSubmittingById[videoId])}
+              onToggleComments={handleToggleComments}
+              onCommentChange={handleCommentInputChange}
+              onCommentSubmit={handleCommentSubmit}
+              onPlaybackChange={handlePlaybackChange}
             />
             );
           })}

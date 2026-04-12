@@ -38,7 +38,7 @@ export default function Navbar() {
   useEffect(() => {
     if (user) {
       const savedProfilePic = localStorage.getItem('profilePicUrl');
-      setProfilePicUrl(savedProfilePic || '');
+      setProfilePicUrl(user.profile_pic_url || savedProfilePic || '');
 
       const userCharacter = localStorage.getItem('userCharacter');
       if (userCharacter) {
