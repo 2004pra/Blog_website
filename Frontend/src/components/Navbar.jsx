@@ -103,6 +103,11 @@ export default function Navbar() {
               📺 Videos
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to="/about" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+              📘 About & Docs
+            </Link>
+          </li>
 
           {user ? (
             <>

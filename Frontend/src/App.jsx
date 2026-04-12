@@ -10,6 +10,7 @@ import CreatePost from './components/CreatePost.jsx';
 import EditPost from './components/EditPost.jsx';
 import VideoFeed from './components/VideoFeed.jsx';
 import VideoUpload from './components/VideoUpload.jsx';
+import AboutDocs from './components/AboutDocs.jsx';
 import './App.css';
 
 function PrivateRoute({ children }) {
@@ -30,6 +31,7 @@ function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<AboutDocs />} />
         <Route path="/videos" element={<VideoFeed />} />
         <Route
           path="/upload-video"

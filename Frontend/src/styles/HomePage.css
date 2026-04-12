@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
 .home-container {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
+  width: min(1320px, 96vw);
+  margin: 28px auto 40px;
+  padding: 0 10px;
 }
 
 .loading-container {
@@ -88,6 +88,56 @@
   margin-top: 40px;
 }
 
+.platform-intro {
+  margin-top: 10px;
+  margin-bottom: 34px;
+  padding: 22px;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  background:
+    radial-gradient(circle at top right, rgba(121, 232, 255, 0.12), transparent 48%),
+    var(--bg-secondary);
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.platform-intro-main h2 {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: 1.55rem;
+  letter-spacing: -0.3px;
+}
+
+.platform-intro-main p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.platform-intro-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.platform-intro-card h3 {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.platform-intro-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .posts-header {
   display: flex;
   justify-content: space-between;
@@ -154,7 +204,48 @@
   gap: 24px;
 }
 
+.explore-footer {
+  margin-top: 52px;
+  padding: 22px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.explore-footer-left h4 {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.explore-footer-left p,
+.explore-footer-right p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.explore-footer-right {
+  max-width: 390px;
+}
+
+.explore-footer-note {
+  margin-top: 6px;
+  font-size: 0.93rem;
+  opacity: 0.9;
+}
+
 @media (max-width: 768px) {
   .home-hero h1 { font-size: 2.5rem; }
   .posts-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .platform-intro {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+  .explore-footer {
+    margin-top: 34px;
+    padding: 16px 4px;
+  }
 }

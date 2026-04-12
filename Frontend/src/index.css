@@ -2,38 +2,38 @@
 
 :root {
   /* Dynamic Variables */
-  --bg-primary: #F7F7F9;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: rgba(255, 255, 255, 0.7);
-  --text-primary: #1C1C1E;
-  --text-secondary: #636366;
-  --accent-color: #007AFF;
-  --accent-hover: #0056B3;
-  --border-color: rgba(0, 0, 0, 0.08);
-  --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
-  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
-  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+  --bg-primary: #f1f5ff;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: rgba(255, 255, 255, 0.78);
+  --text-primary: #1d2233;
+  --text-secondary: #556079;
+  --accent-color: #4f69f6;
+  --accent-hover: #4259d1;
+  --border-color: rgba(75, 95, 170, 0.22);
+  --shadow-sm: 0 6px 16px -8px rgba(62, 84, 163, 0.28);
+  --shadow-md: 0 16px 30px -12px rgba(58, 79, 150, 0.3);
+  --shadow-lg: 0 26px 44px -18px rgba(53, 74, 146, 0.34);
   --card-radius: 24px;
   --btn-radius: 9999px;
   --glass-blur: blur(24px);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --input-bg: #F2F2F7;
+  --glass-bg: rgba(245, 248, 255, 0.86);
+  --input-bg: #eaf0ff;
 }
 
 [data-theme='dark'] {
-  --bg-primary: #000000;
-  --bg-secondary: #1C1C1E;
-  --bg-tertiary: rgba(28, 28, 30, 0.6);
-  --text-primary: #F5F5F7;
-  --text-secondary: #8E8E93;
-  --accent-color: #0A84FF;
-  --accent-hover: #5E5CE6;
-  --border-color: rgba(255, 255, 255, 0.12);
-  --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.2);
-  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.5);
-  --glass-bg: rgba(28, 28, 30, 0.7);
-  --input-bg: #2C2C2E;
+  --bg-primary: #0f1424;
+  --bg-secondary: #181f36;
+  --bg-tertiary: rgba(24, 31, 54, 0.72);
+  --text-primary: #edf2ff;
+  --text-secondary: #a4b0d1;
+  --accent-color: #6b84ff;
+  --accent-hover: #8fa3ff;
+  --border-color: rgba(150, 170, 255, 0.22);
+  --shadow-sm: 0 8px 20px -12px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 18px 34px -16px rgba(0, 0, 0, 0.65);
+  --shadow-lg: 0 28px 48px -20px rgba(0, 0, 0, 0.7);
+  --glass-bg: rgba(19, 26, 46, 0.76);
+  --input-bg: #212b4c;
 }
 
 * {
@@ -45,6 +45,7 @@
 
 body {
   background-color: var(--bg-primary);
+  background-image: radial-gradient(circle at top right, rgba(99, 130, 255, 0.14), transparent 46%);
   color: var(--text-primary);
   transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
   -webkit-font-smoothing: antialiased;

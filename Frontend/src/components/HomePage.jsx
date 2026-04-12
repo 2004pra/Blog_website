@@ -57,6 +57,26 @@ export default function HomePage() {
         </div>
       )}
 
+      <section className="platform-intro" aria-labelledby="platform-intro-title">
+        <div className="platform-intro-main">
+          <h2 id="platform-intro-title">A Social Platform For Thoughts And Stories</h2>
+          <p>
+            Koma is where people share thoughts, life updates, and ideas through posts and video blogs.
+            The goal is simple: make it easy to express yourself and connect with people who care about
+            the same things.
+          </p>
+        </div>
+        <div className="platform-intro-card">
+          <h3>What You Can Do</h3>
+          <ul>
+            <li>Write and publish posts</li>
+            <li>Upload and watch video blogs</li>
+            <li>Like and comment on content</li>
+            <li>Build your profile and presence</li>
+          </ul>
+        </div>
+      </section>
+
       <div className="home-content">
         {error && (
           <div className="error-box">
@@ -98,6 +118,17 @@ export default function HomePage() {
           </>
         )}
       </div>
+
+      <footer className="explore-footer">
+        <div className="explore-footer-left">
+          <h4>Koma</h4>
+          <p>Share your thoughts. Share your story. Grow with the community.</p>
+        </div>
+        <div className="explore-footer-right">
+          <p>Coming soon: Followers, Following, and richer social connections.</p>
+          <p className="explore-footer-note">Built with consistency, patience, and learning by doing.</p>
+        </div>
+      </footer>
     </div>
   );
 }

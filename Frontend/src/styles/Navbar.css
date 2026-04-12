@@ -52,10 +52,10 @@
   font-size: 1.15rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #8be9ff 0%, #8ea2ff 55%, #c6a0ff 100%);
+  background: linear-gradient(135deg, #9cecff 0%, #7ea4ff 55%, #5478ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 18px rgba(126, 175, 255, 0.32);
+  text-shadow: 0 0 18px rgba(84, 120, 255, 0.34);
 }
 
 .nav-menu {
@@ -75,7 +75,7 @@
 }
 
 .nav-link:hover {
-  color: var(--text-primary);
+  color: var(--accent-color);
 }
 
 .profile-link {
@@ -90,7 +90,7 @@
 
 .profile-link:hover {
   transform: scale(1.02);
-  background: var(--border-color);
+  background: rgba(109, 136, 255, 0.16);
 }
 
 .avatar-container {
@@ -137,7 +137,7 @@
 }
 
 .theme-toggle-btn:hover {
-  background: var(--input-bg);
+  background: rgba(109, 136, 255, 0.15);
   transform: rotate(15deg);
 }
 
