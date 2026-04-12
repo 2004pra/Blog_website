@@ -214,6 +214,12 @@ export default function Navbar() {
           <button className="drawer-close-btn" onClick={closeDrawer} aria-label="Close menu">×</button>
         </div>
 
+        <div className="drawer-section" aria-label="Main navigation">
+          <Link to="/" className="drawer-link" onClick={closeDrawer}>🏠 Explore</Link>
+          <Link to="/videos" className="drawer-link" onClick={closeDrawer}>🎥 Videos</Link>
+          <Link to="/about" className="drawer-link" onClick={closeDrawer}>ℹ️ About</Link>
+        </div>
+
         <div className="drawer-links">
           {user ? (
             <>

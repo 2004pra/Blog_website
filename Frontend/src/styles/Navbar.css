@@ -267,6 +267,15 @@
   gap: 8px;
 }
 
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
 .drawer-link {
   border: 1px solid var(--border-color);
   background: var(--bg-secondary);
@@ -305,9 +314,32 @@
     display: none;
   }
 
+  .create-menu-wrap {
+    display: none;
+  }
+
+  .side-drawer {
+    width: min(92vw, 340px);
+    padding: 14px;
+  }
+
   .create-toggle-btn {
     min-width: 84px;
     height: 36px;
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .menu-toggle-btn {
+    min-width: 66px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+  }
+
+  .drawer-link {
+    padding: 10px 10px;
+    font-size: 0.88rem;
   }
 }
