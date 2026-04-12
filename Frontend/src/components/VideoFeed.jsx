@@ -9,15 +9,35 @@ function formatTime(totalSeconds) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
-function VideoCard({ video, onShare }) {
+function buildQualityUrl(url, quality) {
+  if (!url || !url.includes('/upload/')) return url;
+
+  if (quality === 'high') {
+    return url.replace('/upload/', '/upload/q_auto:best,f_auto/');
+  }
+
+  if (quality === 'medium') {
+    return url.replace('/upload/', '/upload/q_auto:good,f_auto,w_1280,c_limit/');
+  }
+
+  return url.replace('/upload/', '/upload/q_auto:eco,f_auto,w_854,c_limit/');
+}
+
+function VideoCard({ video, onShare, activeVideoId, onPlayStart }) {
   const videoRef = useRef(null);
   const wrapperRef = useRef(null);
+  const menuRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [quality, setQuality] = useState('high');
+  const [showMenu, setShowMenu] = useState(false);
+  const [seekHint, setSeekHint] = useState('');
 
+  const playableUrl = buildQualityUrl(video.video_url, quality);
   const thumbnailUrl = video.video_url.replace(/\.[^/.]+$/, '.jpg');
   const avatarColors = [
     '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4',
@@ -26,21 +46,55 @@ function VideoCard({ video, onShare }) {
   const username = video.username || video.user_id || 'Anonymous';
   const avatarColor = avatarColors[username.length % avatarColors.length];
   const descriptionText = (video.description || '').trim();
-  const shouldTruncateDescription = descriptionText.length > 110;
-  const displayedDescription =
-    showFullDescription || !shouldTruncateDescription
-      ? descriptionText
-      : `${descriptionText.slice(0, 110)}...`;
+
+  useEffect(() => {
+    if (activeVideoId !== (video.id || video._id)) {
+      const el = videoRef.current;
+      if (el && !el.paused) {
+        el.pause();
+      }
+      setIsPlaying(false);
+    }
+  }, [activeVideoId, video.id, video._id]);
+
+  useEffect(() => {
+    const closeMenuOnOutsideClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', closeMenuOnOutsideClick);
+    return () => document.removeEventListener('mousedown', closeMenuOnOutsideClick);
+  }, []);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === wrapperRef.current);
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    if (!seekHint) return;
+    const timeout = setTimeout(() => setSeekHint(''), 700);
+    return () => clearTimeout(timeout);
+  }, [seekHint]);
 
   const togglePlay = async () => {
     const el = videoRef.current;
     if (!el) return;
     if (el.paused) {
       await el.play();
+      onPlayStart(video.id || video._id);
       setIsPlaying(true);
+      setSeekHint('▶');
     } else {
       el.pause();
       setIsPlaying(false);
+      setSeekHint('⏸');
     }
   };
 
@@ -57,6 +111,7 @@ function VideoCard({ video, onShare }) {
     const target = Math.max(0, Math.min(el.currentTime + seconds, duration || el.duration || 0));
     el.currentTime = target;
     setCurrentTime(target);
+    setSeekHint(seconds > 0 ? '⏩ 10s' : '⏪ 10s');
   };
 
   const onSeek = (event) => {
@@ -74,26 +129,52 @@ function VideoCard({ video, onShare }) {
     await node.requestFullscreen();
   };
 
+  const onPlayerKeyDown = (event) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      skipBy(10);
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      skipBy(-10);
+    } else if (event.key === ' ') {
+      event.preventDefault();
+      togglePlay();
+    }
+  };
+
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="video-card">
-      <div className="video-wrapper" ref={wrapperRef}>
+      <div className="video-wrapper" ref={wrapperRef} tabIndex={0} onKeyDown={onPlayerKeyDown}>
         <video
           ref={videoRef}
-          src={video.video_url}
+          src={playableUrl}
           poster={thumbnailUrl}
           controlsList="nodownload noplaybackrate"
           disablePictureInPicture
           onContextMenu={(e) => e.preventDefault()}
           preload="metadata"
           className="video-player"
+          onClick={togglePlay}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
           onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime || 0)}
-          onPlay={() => setIsPlaying(true)}
+          onPlay={() => {
+            onPlayStart(video.id || video._id);
+            setIsPlaying(true);
+          }}
           onPause={() => setIsPlaying(false)}
           onEnded={() => setIsPlaying(false)}
         />
+
+        {!isPlaying && <div className="center-play-icon">▶</div>}
+        {seekHint && <div className="seek-hint">{seekHint}</div>}
+
+        {showDescription && descriptionText && (
+          <div className="description-overlay">
+            <p>{descriptionText}</p>
+          </div>
+        )}
 
         <div className="player-controls">
           <input
@@ -109,15 +190,24 @@ function VideoCard({ video, onShare }) {
 
           <div className="controls-row">
             <div className="controls-left">
-              <button type="button" className="ctrl-btn" onClick={togglePlay}>
-                {isPlaying ? 'Pause' : 'Play'}
+              <button
+                type="button"
+                className="ctrl-btn icon-btn"
+                onClick={togglePlay}
+                aria-label={isPlaying ? 'Pause video' : 'Play video'}
+              >
+                {isPlaying ? '⏸' : '▶'}
               </button>
-              <button type="button" className="ctrl-btn" onClick={() => skipBy(-10)}>
-                -10s
-              </button>
-              <button type="button" className="ctrl-btn" onClick={() => skipBy(10)}>
-                +10s
-              </button>
+              {isFullscreen && (
+                <>
+                  <button type="button" className="ctrl-btn" onClick={() => skipBy(-10)}>
+                    ⏪ 10s
+                  </button>
+                  <button type="button" className="ctrl-btn" onClick={() => skipBy(10)}>
+                    10s ⏩
+                  </button>
+                </>
+              )}
               <button type="button" className="ctrl-btn" onClick={toggleMute}>
                 {isMuted ? 'Unmute' : 'Mute'}
               </button>
@@ -133,6 +223,54 @@ function VideoCard({ video, onShare }) {
               <button type="button" className="ctrl-btn" onClick={openFullscreen}>
                 Full
               </button>
+              <div className="more-menu" ref={menuRef}>
+                <button
+                  type="button"
+                  className="ctrl-btn icon-btn"
+                  onClick={() => setShowMenu((prev) => !prev)}
+                  aria-label="Open video options"
+                >
+                  ⋮
+                </button>
+                {showMenu && (
+                  <div className="menu-popover">
+                    <button
+                      type="button"
+                      className="menu-item"
+                      onClick={() => {
+                        setShowDescription((prev) => !prev);
+                        setShowMenu(false);
+                      }}
+                    >
+                      {showDescription ? 'Hide description' : 'Show description'}
+                    </button>
+                    <div className="menu-label">Quality</div>
+                    <div className="quality-group">
+                      <button
+                        type="button"
+                        className={`quality-item ${quality === 'high' ? 'active' : ''}`}
+                        onClick={() => setQuality('high')}
+                      >
+                        High
+                      </button>
+                      <button
+                        type="button"
+                        className={`quality-item ${quality === 'medium' ? 'active' : ''}`}
+                        onClick={() => setQuality('medium')}
+                      >
+                        Medium
+                      </button>
+                      <button
+                        type="button"
+                        className={`quality-item ${quality === 'low' ? 'active' : ''}`}
+                        onClick={() => setQuality('low')}
+                      >
+                        Data Saver
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -146,21 +284,6 @@ function VideoCard({ video, onShare }) {
         <div className="video-details-text">
           <h3 className="video-title" title={video.title}>{video.title}</h3>
           <p className="channel-name">{username}</p>
-          {descriptionText && (
-            <p className="video-description">
-              {displayedDescription}{' '}
-              {shouldTruncateDescription && (
-                <button
-                  type="button"
-                  className="description-toggle"
-                  onClick={() => setShowFullDescription((prev) => !prev)}
-                  aria-label={showFullDescription ? 'Show less description' : 'Show full description'}
-                >
-                  {showFullDescription ? 'less' : 'more'}
-                </button>
-              )}
-            </p>
-          )}
           <p className="video-meta">
             <span>{Math.floor(Math.random() * 900) + 10}K views</span>
             <span>&nbsp;•&nbsp;</span>
@@ -183,6 +306,7 @@ export default function VideoFeed() {
   const [videos, setVideos] = useState([]); // Will hold the array of video objects from MongoDB
   const [loading, setLoading] = useState(true); // Shows "Loading..." initially
   const [error, setError] = useState(null); // Catches network errors
+  const [activeVideoId, setActiveVideoId] = useState(null);
 
   // Run exactly once when the component first loads
   useEffect(() => {
@@ -240,7 +364,13 @@ export default function VideoFeed() {
       ) : (
         <div className="video-grid">
           {videos.map((video) => (
-            <VideoCard key={video.id || video._id} video={video} onShare={handleShare} />
+            <VideoCard
+              key={video.id || video._id}
+              video={video}
+              onShare={handleShare}
+              activeVideoId={activeVideoId}
+              onPlayStart={setActiveVideoId}
+            />
           ))}
         </div>
       )}
