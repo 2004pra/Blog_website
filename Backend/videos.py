@@ -3,14 +3,17 @@ from datetime import datetime
 from db import db
 from auth import token_required
 from bson import ObjectId
+from bson.errors import InvalidId
+from pymongo import ReturnDocument
 
 videos_bp = Blueprint("videos", __name__)
 
 @videos_bp.route("/Upload_video",methods=["POST"])
 @token_required
 def createVideo(user_id):
-    data = request.get_json();
+    data = request.get_json()
     title = data.get("title")
+    likes = 0
     description = data.get("description")
     video_url = data.get("video_url")
     if not video_url:
@@ -23,7 +26,8 @@ def createVideo(user_id):
         "description":description,
         "video_url":video_url,
          "user_id"    : user_id,
-        "created_at" : datetime.utcnow()
+        "created_at" : datetime.utcnow(),
+        "likes":likes
     }
     
     db.videos.insert_one(video)
@@ -62,7 +66,8 @@ def get_video():
             "video_url":video["video_url"],
             "user_id":video_user_id,
             "username":username_map.get(video_user_id, "Unknown"),
-            "created_at":str(video.get("created_at"))
+            "created_at":str(video.get("created_at")),
+            "likes":int(video.get("likes", 0))
         })
         
     return jsonify(result)
@@ -84,5 +89,7 @@ def delete_video(user_id,video_id):
     db.videos.delete_one({"_id":ObjectId(video_id)})
     
     return jsonify({"message":"video deleted successfully ✅"})
+
+
 
 

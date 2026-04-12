@@ -286,6 +286,50 @@
   line-height: 1.35;
 }
 
+.video-meta-row {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.video-like-btn {
+  border: 0;
+  background: transparent;
+  color: #cfcfcf;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
+.video-like-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ff6b81;
+}
+
+.video-like-btn.liked {
+  color: #ff6b81;
+}
+
+.video-like-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.video-like-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.video-like-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 10px;
+}
+
 .share-btn {
   margin-left: auto;
   border: 0;

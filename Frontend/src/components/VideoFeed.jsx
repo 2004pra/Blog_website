@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { API_BASE_URL } from '../api.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/VideoFeed.css';
 
 function formatTime(totalSeconds) {
@@ -23,7 +24,11 @@ function buildQualityUrl(url, quality) {
   return url.replace('/upload/', '/upload/q_auto:eco,f_auto,w_854,c_limit/');
 }
 
-function VideoCard({ video, videoKey, onShare, activeVideoId, onPlayStart }) {
+function extractVideoId(video) {
+  return video?.id || video?._id || '';
+}
+
+function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onShare, activeVideoId, onPlayStart }) {
   const videoRef = useRef(null);
   const wrapperRef = useRef(null);
   const menuRef = useRef(null);
@@ -310,7 +315,8 @@ function VideoCard({ video, videoKey, onShare, activeVideoId, onPlayStart }) {
         <div className="video-details-text">
           <h3 className="video-title" title={video.title}>{video.title}</h3>
           <p className="channel-name">{username}</p>
-          <p className="video-meta">
+          <div className="video-meta-row">
+            <p className="video-meta">
             <span>{Math.floor(Math.random() * 900) + 10}K views</span>
             <span>&nbsp;•&nbsp;</span>
             <span>
@@ -320,7 +326,19 @@ function VideoCard({ video, videoKey, onShare, activeVideoId, onPlayStart }) {
                 day: 'numeric'
               })}
             </span>
-          </p>
+            </p>
+            <button
+              type="button"
+              className={`video-like-btn ${isLiked ? 'liked' : ''}`}
+              onClick={() => onLike(extractVideoId(video))}
+              disabled={isLiking}
+              aria-label={isLiked ? 'Unlike video' : 'Like video'}
+              title={isLiked ? 'Unlike' : 'Like'}
+            >
+              <span className="video-like-icon">♥</span>
+              <span className="video-like-count">{likesCount}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -333,6 +351,10 @@ export default function VideoFeed() {
   const [loading, setLoading] = useState(true); // Shows "Loading..." initially
   const [error, setError] = useState(null); // Catches network errors
   const [activeVideoId, setActiveVideoId] = useState(null);
+  const [likesById, setLikesById] = useState({});
+  const [likedById, setLikedById] = useState({});
+  const [likeInFlight, setLikeInFlight] = useState({});
+  const { token } = useContext(AuthContext);
 
   // Run exactly once when the component first loads
   useEffect(() => {
@@ -349,10 +371,107 @@ export default function VideoFeed() {
       
       const data = await response.json(); // Parses JSON array from the backend
       setVideos(data); // Save the videos into React state
+
+      const videoIds = data
+        .map((video) => extractVideoId(video))
+        .filter(Boolean);
+
+      const likeCountEntries = await Promise.all(
+        videoIds.map(async (videoId) => {
+          try {
+            const countRes = await fetch(`${API_BASE_URL}/likes/like_count/${videoId}`);
+            if (!countRes.ok) return [videoId, 0];
+            const countData = await countRes.json();
+            return [videoId, Number(countData.likes || 0)];
+          } catch {
+            return [videoId, 0];
+          }
+        })
+      );
+
+      setLikesById(Object.fromEntries(likeCountEntries));
+
+      if (token) {
+        const likeStatusEntries = await Promise.all(
+          videoIds.map(async (videoId) => {
+            try {
+              const statusRes = await fetch(`${API_BASE_URL}/likes/status/${videoId}`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              if (!statusRes.ok) return [videoId, false];
+              const statusData = await statusRes.json();
+              return [videoId, Boolean(statusData.liked)];
+            } catch {
+              return [videoId, false];
+            }
+          })
+        );
+
+        setLikedById(Object.fromEntries(likeStatusEntries));
+      } else {
+        setLikedById({});
+      }
     } catch (err) {
       setError(err.message || 'Error occurred while loading videos');
     } finally {
       setLoading(false); // Hide the loading screen regardless of success or failure
+    }
+  };
+
+  const handleLike = async (videoId) => {
+    if (!videoId) return;
+    if (!token) {
+      alert('Please login to like videos.');
+      return;
+    }
+
+    if (likeInFlight[videoId]) return;
+
+    const currentlyLiked = Boolean(likedById[videoId]);
+    setLikeInFlight((prev) => ({ ...prev, [videoId]: true }));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/likes/likes/${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to like video');
+      }
+
+      const statusRes = await fetch(`${API_BASE_URL}/likes/status/${videoId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        setLikedById((prev) => ({ ...prev, [videoId]: Boolean(statusData.liked) }));
+      } else {
+        setLikedById((prev) => ({ ...prev, [videoId]: !currentlyLiked }));
+      }
+
+      const countRes = await fetch(`${API_BASE_URL}/likes/like_count/${videoId}`);
+      if (countRes.ok) {
+        const countData = await countRes.json();
+        setLikesById((prev) => ({ ...prev, [videoId]: Number(countData.likes || 0) }));
+      } else {
+        setLikesById((prev) => ({
+          ...prev,
+          [videoId]: Math.max(Number(prev[videoId] || 0) + (currentlyLiked ? -1 : 1), 0)
+        }));
+      }
+    } catch (err) {
+      alert(err.message || 'Could not like this video right now.');
+    } finally {
+      setLikeInFlight((prev) => ({ ...prev, [videoId]: false }));
     }
   };
 
@@ -396,6 +515,10 @@ export default function VideoFeed() {
               key={videoKey}
               video={video}
               videoKey={videoKey}
+              likesCount={Number(likesById[extractVideoId(video)] ?? 0)}
+              isLiked={Boolean(likedById[extractVideoId(video)])}
+              isLiking={Boolean(likeInFlight[extractVideoId(video)])}
+              onLike={handleLike}
               onShare={handleShare}
               activeVideoId={activeVideoId}
               onPlayStart={setActiveVideoId}
