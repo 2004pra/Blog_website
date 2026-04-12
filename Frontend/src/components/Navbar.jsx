@@ -8,6 +8,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [character, setCharacter] = useState(null);
+  const [profilePicUrl, setProfilePicUrl] = useState('');
   const [isDark, setIsDark] = useState(false);
 
   // Initialize theme
@@ -36,6 +37,9 @@ export default function Navbar() {
   // Load character from localStorage whenever user changes
   useEffect(() => {
     if (user) {
+      const savedProfilePic = localStorage.getItem('profilePicUrl');
+      setProfilePicUrl(savedProfilePic || '');
+
       const userCharacter = localStorage.getItem('userCharacter');
       if (userCharacter) {
         try {
@@ -55,6 +59,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem('profilePicUrl');
     navigate('/');
     setMobileMenuOpen(false);
   };
@@ -114,7 +119,14 @@ export default function Navbar() {
               <li className="nav-item profile-item">
                 <Link to="/profile" className="profile-link" onClick={() => setMobileMenuOpen(false)}>
                   <div className="avatar-container">
-                    {character?.image ? (
+                    {profilePicUrl ? (
+                      <img
+                        src={profilePicUrl}
+                        alt={user.username}
+                        className="avatar-img"
+                        onError={() => setProfilePicUrl('')}
+                      />
+                    ) : character?.image ? (
                       <img 
                         src={character.image} 
                         alt={user.username} 

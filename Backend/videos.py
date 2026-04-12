@@ -47,6 +47,7 @@ def get_video():
 
     user_ids = {video.get("user_id") for video in videos if video.get("user_id")}
     username_map = {}
+    profile_pic_map = {}
 
     for uid in user_ids:
         try:
@@ -54,6 +55,13 @@ def get_video():
             username_map[uid] = user.get("username") if user else "Unknown"
         except Exception:
             username_map[uid] = "Unknown"
+
+    if user_ids:
+        profile_docs = list(db.profiles.find({"user_id": {"$in": list(user_ids)}}))
+        for profile in profile_docs:
+            profile_user_id = profile.get("user_id")
+            if profile_user_id:
+                profile_pic_map[profile_user_id] = profile.get("profile_pic_url")
     
     result = []
     
@@ -66,6 +74,7 @@ def get_video():
             "video_url":video["video_url"],
             "user_id":video_user_id,
             "username":username_map.get(video_user_id, "Unknown"),
+            "profile_pic_url":profile_pic_map.get(video_user_id),
             "created_at":str(video.get("created_at")),
             "likes":int(video.get("likes", 0))
         })

@@ -51,6 +51,7 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
   const username = video.username || video.user_id || 'Anonymous';
   const avatarColor = avatarColors[username.length % avatarColors.length];
   const descriptionText = (video.description || '').trim();
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     if (activeVideoId !== videoKey) {
@@ -309,7 +310,15 @@ function VideoCard({ video, videoKey, likesCount, isLiked, isLiking, onLike, onS
 
       <div className="video-details-container">
         <div className="channel-avatar" style={{ backgroundColor: avatarColor }} title={username}>
-          {username.charAt(0).toUpperCase()}
+          {video.profile_pic_url && !avatarError ? (
+            <img
+              src={video.profile_pic_url}
+              alt={username}
+              onError={() => setAvatarError(true)}
+            />
+          ) : (
+            username.charAt(0).toUpperCase()
+          )}
         </div>
 
         <div className="video-details-text">

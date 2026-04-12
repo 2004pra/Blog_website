@@ -59,6 +59,36 @@
   font-weight: 500;
 }
 
+.profile-pic-btn {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.profile-pic-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.profile-pic-btn input[type="file"] {
+  display: none;
+}
+
+.profile-pic-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .profile-section h2 {
   font-size: 1.8rem;
   font-weight: 700;
