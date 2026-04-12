@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/Navbar.css';
@@ -8,9 +8,11 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [character, setCharacter] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [isDark, setIsDark] = useState(false);
+  const createMenuRef = useRef(null);
 
   // Initialize theme
   useEffect(() => {
@@ -63,13 +65,16 @@ export default function Navbar() {
     localStorage.removeItem('profilePicUrl');
     navigate('/');
     setDrawerOpen(false);
+    setCreateMenuOpen(false);
   };
 
   const closeDrawer = () => setDrawerOpen(false);
+  const closeCreateMenu = () => setCreateMenuOpen(false);
 
   // Keep drawer behavior stable: close on route changes and ESC, and lock page scroll while open.
   useEffect(() => {
     setDrawerOpen(false);
+    setCreateMenuOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -83,6 +88,7 @@ export default function Navbar() {
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
         setDrawerOpen(false);
+        setCreateMenuOpen(false);
       }
     };
 
@@ -92,6 +98,17 @@ export default function Navbar() {
       document.body.style.overflow = '';
     };
   }, [drawerOpen]);
+
+  useEffect(() => {
+    const onPointerDown = (event) => {
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setCreateMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, []);
 
   return (
     <nav className="navbar">
@@ -121,6 +138,36 @@ export default function Navbar() {
         </div>
 
         <div className="nav-right-actions">
+          <div className="create-menu-wrap" ref={createMenuRef}>
+            <button
+              className="create-toggle-btn"
+              onClick={() => setCreateMenuOpen((prev) => !prev)}
+              aria-label="Open create menu"
+              aria-expanded={createMenuOpen}
+            >
+              + Create
+            </button>
+
+            {createMenuOpen && (
+              <div className="create-menu-popover">
+                {user ? (
+                  <>
+                    <Link to="/create-post" className="create-menu-item" onClick={closeCreateMenu}>
+                      ✍️ Write Post
+                    </Link>
+                    <Link to="/upload-video" className="create-menu-item" onClick={closeCreateMenu}>
+                      🎬 Upload Video
+                    </Link>
+                  </>
+                ) : (
+                  <Link to="/login" className="create-menu-item" onClick={closeCreateMenu}>
+                    Sign in to create
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+
           {user && (
             <Link to="/profile" className="profile-chip" onClick={closeDrawer}>
               <div className="avatar-container">
