@@ -278,10 +278,10 @@ function VideoCard({
             </div>
 
             <div className="controls-right">
-              <button type="button" className="ctrl-btn" onClick={() => onShare(video)}>
+              <button type="button" className="ctrl-btn share-control-btn" onClick={() => onShare(video)}>
                 Share
               </button>
-              <button type="button" className="ctrl-btn" onClick={openFullscreen}>
+              <button type="button" className="ctrl-btn fullscreen-control-btn" onClick={openFullscreen}>
                 Full
               </button>
               <div className="more-menu" ref={menuRef}>
@@ -365,27 +365,29 @@ function VideoCard({
               })}
             </span>
             </p>
-            <button
-              type="button"
-              className={`video-like-btn ${isLiked ? 'liked' : ''}`}
-              onClick={() => onLike(extractVideoId(video))}
-              disabled={isLiking}
-              aria-label={isLiked ? 'Unlike video' : 'Like video'}
-              title={isLiked ? 'Unlike' : 'Like'}
-            >
-              <span className="video-like-icon">♥</span>
-              <span className="video-like-count">{likesCount}</span>
-            </button>
-            <button
-              type="button"
-              className={`video-comment-btn ${commentsOpen ? 'active' : ''}`}
-              onClick={() => onToggleComments(extractVideoId(video))}
-              aria-label="Open comments"
-              title="Comments"
-            >
-              <span className="video-comment-icon">💬</span>
-              <span className="video-comment-count">{commentCount}</span>
-            </button>
+            <div className="video-engagement-actions">
+              <button
+                type="button"
+                className={`video-like-btn ${isLiked ? 'liked' : ''}`}
+                onClick={() => onLike(extractVideoId(video))}
+                disabled={isLiking}
+                aria-label={isLiked ? 'Unlike video' : 'Like video'}
+                title={isLiked ? 'Unlike' : 'Like'}
+              >
+                <span className="video-like-icon">♥</span>
+                <span className="video-like-count">{likesCount}</span>
+              </button>
+              <button
+                type="button"
+                className={`video-comment-btn ${commentsOpen ? 'active' : ''}`}
+                onClick={() => onToggleComments(extractVideoId(video))}
+                aria-label="Open comments"
+                title="Comments"
+              >
+                <span className="video-comment-icon">💬</span>
+                <span className="video-comment-count">{commentCount}</span>
+              </button>
+            </div>
           </div>
 
           {shouldShowComments && (
