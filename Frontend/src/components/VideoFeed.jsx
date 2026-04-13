@@ -456,6 +456,7 @@ export default function VideoFeed() {
   const [commentsById, setCommentsById] = useState({});
   const [commentsOpenById, setCommentsOpenById] = useState({});
   const [commentsLoadingById, setCommentsLoadingById] = useState({});
+  const [commentsAttemptedById, setCommentsAttemptedById] = useState({});
   const [commentErrorById, setCommentErrorById] = useState({});
   const [commentInputById, setCommentInputById] = useState({});
   const [commentSubmittingById, setCommentSubmittingById] = useState({});
@@ -631,6 +632,7 @@ export default function VideoFeed() {
     }
 
     setCommentsLoadingById((prev) => ({ ...prev, [videoId]: true }));
+    setCommentsAttemptedById((prev) => ({ ...prev, [videoId]: true }));
     setCommentErrorById((prev) => ({ ...prev, [videoId]: '' }));
 
     try {
@@ -788,14 +790,15 @@ export default function VideoFeed() {
 
     openVideoIds.forEach((videoId) => {
       const hasNoCommentsLoaded = commentsById[videoId] === undefined;
+      const hasNotAttemptedFetch = !commentsAttemptedById[videoId];
       const hasAuthError = (commentErrorById[videoId] || '').toLowerCase().includes('login');
       const isLoading = Boolean(commentsLoadingById[videoId]);
 
-      if (!isLoading && (hasNoCommentsLoaded || hasAuthError)) {
+      if (!isLoading && ((hasNoCommentsLoaded && hasNotAttemptedFetch) || hasAuthError)) {
         fetchCommentsForVideo(videoId);
       }
     });
-  }, [authLoading, token, commentsOpenById, commentsLoadingById]);
+  }, [authLoading, token, commentsOpenById, commentsLoadingById, commentsById, commentsAttemptedById, commentErrorById]);
 
   // 1. Handle UI state when waiting for the network
   if (loading) {
