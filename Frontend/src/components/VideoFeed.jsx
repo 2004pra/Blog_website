@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EllipsisVertical, MessageCircle, Pause, Play, SendHorizontal, UserCircle2 } from 'lucide-react';
 import { API_BASE_URL } from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/VideoFeed.css';
@@ -231,7 +232,11 @@ function VideoCard({
           }}
         />
 
-        {!isPlaying && <div className="center-play-icon">Play</div>}
+        {!isPlaying && (
+          <div className="center-play-icon" aria-hidden="true">
+            <Play size={30} strokeWidth={2.4} />
+          </div>
+        )}
         {seekHint && <div className="seek-hint">{seekHint}</div>}
 
         {showDescription && descriptionText && (
@@ -260,7 +265,7 @@ function VideoCard({
                 onClick={togglePlay}
                 aria-label={isPlaying ? 'Pause video' : 'Play video'}
               >
-                {isPlaying ? 'Pause' : 'Play'}
+                {isPlaying ? <Pause size={16} /> : <Play size={16} />}
               </button>
               {isFullscreen && (
                 <>
@@ -294,7 +299,7 @@ function VideoCard({
                   onClick={() => setShowMenu((prev) => !prev)}
                   aria-label="Open video options"
                 >
-                  More
+                  <EllipsisVertical size={16} />
                 </button>
                 {showMenu && (
                   <div className="menu-popover">
@@ -400,7 +405,9 @@ function VideoCard({
                 aria-label="Open comments"
                 title="Comments"
               >
-                <span className="video-comment-icon">Comment</span>
+                <span className="video-comment-icon" aria-hidden="true">
+                  <MessageCircle size={14} />
+                </span>
                 <span className="video-comment-count">{commentCount}</span>
               </button>
             </div>
@@ -416,7 +423,12 @@ function VideoCard({
                 <div className="video-comments-list">
                   {comments.map((item) => (
                     <div className="video-comment-item" key={item.id || `${item.user_id}-${item.created_at}`}>
-                      <p className="video-comment-author">{item.username || 'Unknown'}</p>
+                      <div className="video-comment-author-row">
+                        <span className="video-comment-author-icon" aria-hidden="true">
+                          <UserCircle2 size={14} />
+                        </span>
+                        <p className="video-comment-author">{item.username || 'Unknown'}</p>
+                      </div>
                       <p className="video-comment-text">{item.comment}</p>
                     </div>
                   ))}
@@ -445,7 +457,12 @@ function VideoCard({
                   className="video-comment-send"
                   disabled={isCommentSubmitting || !commentValue.trim()}
                 >
-                  {isCommentSubmitting ? 'Posting...' : 'Post'}
+                  {isCommentSubmitting ? 'Posting...' : (
+                    <span className="video-comment-send-inner">
+                      <SendHorizontal size={14} />
+                      Post
+                    </span>
+                  )}
                 </button>
               </form>
             </div>
