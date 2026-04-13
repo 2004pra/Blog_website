@@ -16,6 +16,8 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from db import db
 from profile import profile_bp
+from user_profile import user_profile_bp
+from follow import follow_bp
 
 
 
@@ -31,6 +33,9 @@ app.register_blueprint(profile_bp)
 app.register_blueprint(videos_bp,url_prefix="/api/videos")
 app.register_blueprint(upload_bp)
 app.register_blueprint(likes_bp,url_prefix="/likes")
+app.register_blueprint(user_profile_bp)
+app.register_blueprint(follow_bp)
+
 
 
 

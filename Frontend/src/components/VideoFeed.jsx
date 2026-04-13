@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/VideoFeed.css';
@@ -49,6 +50,7 @@ function VideoCard({
   onCommentChange,
   onCommentSubmit,
   onPlaybackChange,
+  onOpenProfile,
   forceCommentsVisible = false,
   layoutMode = 'grid'
 }) {
@@ -339,21 +341,34 @@ function VideoCard({
       </div>
 
       <div className="video-details-container">
-        <div className="channel-avatar" style={{ backgroundColor: avatarColor }} title={username}>
-          {video.profile_pic_url && !avatarError ? (
-            <img
-              src={video.profile_pic_url}
-              alt={username}
-              onError={() => setAvatarError(true)}
-            />
-          ) : (
-            username.charAt(0).toUpperCase()
-          )}
-        </div>
+        <button
+          type="button"
+          className="channel-avatar-btn"
+          onClick={() => onOpenProfile?.(video.user_id)}
+          aria-label={`Open ${username} profile`}
+        >
+          <div className="channel-avatar" style={{ backgroundColor: avatarColor }} title={username}>
+            {video.profile_pic_url && !avatarError ? (
+              <img
+                src={video.profile_pic_url}
+                alt={username}
+                onError={() => setAvatarError(true)}
+              />
+            ) : (
+              username.charAt(0).toUpperCase()
+            )}
+          </div>
+        </button>
 
         <div className="video-details-text">
           <h3 className="video-title" title={video.title}>{video.title}</h3>
-          <p className="channel-name">{username}</p>
+          <button
+            type="button"
+            className="channel-name channel-name-btn"
+            onClick={() => onOpenProfile?.(video.user_id)}
+          >
+            {username}
+          </button>
           <div className="video-meta-row">
             <p className="video-meta">
             <span>{Number(viewsCount ?? 0)} views</span>
@@ -463,6 +478,18 @@ export default function VideoFeed() {
   const [viewInFlight, setViewInFlight] = useState({});
   const viewedVideosRef = useRef(new Set());
   const { token, loading: authLoading, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleOpenProfile = (targetUserId) => {
+    if (!targetUserId) return;
+    const authToken = resolveAuthToken();
+    if (!authToken) {
+      alert('Please login to view user profile.');
+      navigate('/login');
+      return;
+    }
+    navigate(`/users/${targetUserId}`);
+  };
 
   const handleSessionExpired = (videoId, fallbackMessage = 'Session expired. Please login again.') => {
     if (videoId) {
@@ -880,6 +907,7 @@ export default function VideoFeed() {
               onCommentChange={handleCommentInputChange}
               onCommentSubmit={handleCommentSubmit}
               onPlaybackChange={handlePlaybackChange}
+              onOpenProfile={handleOpenProfile}
               layoutMode="focused"
             />
           </div>
@@ -911,6 +939,7 @@ export default function VideoFeed() {
                   onCommentChange={handleCommentInputChange}
                   onCommentSubmit={handleCommentSubmit}
                   onPlaybackChange={handlePlaybackChange}
+                  onOpenProfile={handleOpenProfile}
                   layoutMode="sidebar"
                 />
               );
@@ -945,6 +974,7 @@ export default function VideoFeed() {
               onCommentChange={handleCommentInputChange}
               onCommentSubmit={handleCommentSubmit}
               onPlaybackChange={handlePlaybackChange}
+              onOpenProfile={handleOpenProfile}
             />
             );
           })}

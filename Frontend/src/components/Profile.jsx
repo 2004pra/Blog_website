@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import PostCard from './PostCard.jsx';
-import { API_BASE_URL } from '../api.js';
+import { API_BASE_URL, fetchFollowView } from '../api.js';
 import '../styles/Profile.css';
 
 export default function Profile() {
@@ -13,6 +13,10 @@ export default function Profile() {
   const [character, setCharacter] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -97,6 +101,14 @@ export default function Profile() {
 
       setUserPosts(normalizedPosts);
       setUserVideos(normalizedVideos);
+      try {
+        const followData = await fetchFollowView(user.id, token);
+        setFollowers(Array.isArray(followData.followers) ? followData.followers : []);
+        setFollowing(Array.isArray(followData.following) ? followData.following : []);
+      } catch {
+        setFollowers([]);
+        setFollowing([]);
+      }
       if (profileData?.user?.profile_pic_url) {
         setProfilePicUrl(profileData.user.profile_pic_url);
         localStorage.setItem('profilePicUrl', profileData.user.profile_pic_url);
@@ -210,6 +222,15 @@ export default function Profile() {
     }
   };
 
+  const handleOpenFollowProfile = (targetUserId) => {
+    if (!targetUserId) return;
+    if (String(targetUserId) === String(user?.id)) {
+      navigate('/profile');
+      return;
+    }
+    navigate(`/users/${targetUserId}`);
+  };
+
   if (!user) return null;
 
   return (
@@ -236,6 +257,10 @@ export default function Profile() {
         <div className="profile-info">
           <h1>{user.username}</h1>
           <p className="profile-stats">{userPosts.length} {userPosts.length === 1 ? 'post' : 'posts'} published</p>
+          <div className="profile-follow-stats">
+            <span>{followers.length} Followers</span>
+            <span>{following.length} Following</span>
+          </div>
           <label className={`profile-pic-btn ${uploadingPhoto ? 'disabled' : ''}`}>
             {uploadingPhoto ? 'Updating...' : 'Update Profile Photo'}
             <input
@@ -245,6 +270,74 @@ export default function Profile() {
               disabled={uploadingPhoto}
             />
           </label>
+        </div>
+      </div>
+
+      <div className="profile-section">
+        <h2>👥 Followers & Following</h2>
+        <div className="profile-follow-controls">
+          <button
+            type="button"
+            className="profile-follow-toggle-btn"
+            onClick={() => setShowFollowers((prev) => !prev)}
+          >
+            {showFollowers ? 'Hide Followers' : 'Show Followers'}
+          </button>
+          <button
+            type="button"
+            className="profile-follow-toggle-btn"
+            onClick={() => setShowFollowing((prev) => !prev)}
+          >
+            {showFollowing ? 'Hide Following' : 'Show Following'}
+          </button>
+        </div>
+
+        <div className="profile-follow-grid">
+          {showFollowers && (
+            <div className="profile-follow-card">
+              <h3>My Followers</h3>
+              {followers.length === 0 ? (
+                <p className="profile-follow-empty">No followers yet.</p>
+              ) : (
+                <ul className="profile-follow-list">
+                  {followers.map((item, index) => (
+                    <li key={`${item.user_id || item.username}-${index}`}>
+                      <button
+                        type="button"
+                        className="profile-follow-user-btn"
+                        onClick={() => handleOpenFollowProfile(item.user_id)}
+                      >
+                        {item.username || 'Unknown'}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {showFollowing && (
+            <div className="profile-follow-card">
+              <h3>My Following</h3>
+              {following.length === 0 ? (
+                <p className="profile-follow-empty">Not following anyone yet.</p>
+              ) : (
+                <ul className="profile-follow-list">
+                  {following.map((item, index) => (
+                    <li key={`${item.user_id || item.username}-${index}`}>
+                      <button
+                        type="button"
+                        className="profile-follow-user-btn"
+                        onClick={() => handleOpenFollowProfile(item.user_id)}
+                      >
+                        {item.username || 'Unknown'}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

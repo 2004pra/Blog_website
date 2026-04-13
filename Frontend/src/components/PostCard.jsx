@@ -57,13 +57,22 @@ export default function PostCard({ post, onDelete }) {
     navigate(`/edit-post/${post.id}`);
   };
 
+  const handleAuthorClick = (e) => {
+    e.stopPropagation();
+    if (!post.user_id || isOwnPost) return;
+    navigate(`/users/${post.user_id}`);
+  };
+
   return (
     <article className="post-card">
       <div className="post-card-content">
         <h3 className="post-title">{post.title}</h3>
         <p className="post-excerpt">{truncateContent(post.content)}</p>
         <div className="post-meta">
-          <span className="post-author">
+          <span
+            className={`post-author ${!isOwnPost && post.user_id ? 'post-author-clickable' : ''}`}
+            onClick={handleAuthorClick}
+          >
             by {post.username || post.user_id || 'Unknown'}
           </span>
           <span className="post-date">{formatDate(post.created_at)}</span>

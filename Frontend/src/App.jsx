@@ -6,6 +6,7 @@ import HomePage from './components/HomePage.jsx';
 import Login from './components/Login.jsx';
 import Signup from './components/Signup.jsx';
 import Profile from './components/Profile.jsx';
+import PublicProfile from './components/PublicProfile.jsx';
 import CreatePost from './components/CreatePost.jsx';
 import EditPost from './components/EditPost.jsx';
 import VideoFeed from './components/VideoFeed.jsx';
@@ -46,6 +47,14 @@ function AppRoutes() {
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <PrivateRoute>
+              <PublicProfile />
             </PrivateRoute>
           }
         />

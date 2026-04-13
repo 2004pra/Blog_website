@@ -56,6 +56,15 @@
   font-weight: 600;
 }
 
+.post-author-clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.post-author-clickable:hover {
+  color: var(--accent-color);
+}
+
 .post-date {
   font-size: 0.85rem;
   color: var(--text-secondary);

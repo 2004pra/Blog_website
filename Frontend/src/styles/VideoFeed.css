@@ -343,6 +343,20 @@
   flex-shrink: 0;
 }
 
+.channel-avatar-btn {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.channel-avatar-btn:focus-visible {
+  outline: 2px solid #7ac9ff;
+  outline-offset: 2px;
+}
+
 .channel-avatar img {
   width: 100%;
   height: 100%;
@@ -374,6 +388,19 @@
   color: #a6a6a6;
   font-size: 0.82rem;
   line-height: 1.35;
+}
+
+.channel-name-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.channel-name-btn:hover {
+  color: #7ac9ff;
 }
 
 .video-meta-row {

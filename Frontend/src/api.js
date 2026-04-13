@@ -128,3 +128,54 @@ export const login = async (username, password) => {
     throw error;
   }
 };
+
+export const fetchUserProfile = async (userId, token) => {
+  const response = await fetch(`${API_BASE_URL}/users/${userId}/profile`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to load user profile');
+  }
+
+  return payload;
+};
+
+export const toggleFollowUser = async (targetUserId, token) => {
+  const response = await fetch(`${API_BASE_URL}/follow/${targetUserId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || payload.message || 'Failed to update follow status');
+  }
+
+  return payload;
+};
+
+export const fetchFollowView = async (targetUserId, token) => {
+  const response = await fetch(`${API_BASE_URL}/follow/view/${targetUserId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to load followers/following');
+  }
+
+  return payload;
+};
