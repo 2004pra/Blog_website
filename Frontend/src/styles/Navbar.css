@@ -146,6 +146,16 @@
   border-color: rgba(109, 136, 255, 0.38);
 }
 
+.menu-item-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item-with-icon svg {
+  flex-shrink: 0;
+}
+
 .profile-chip {
   display: flex;
   align-items: center;
@@ -204,6 +214,10 @@
   font-size: 0.9rem;
   font-weight: 700;
   transition: all 0.2s ease;
+}
+
+.menu-toggle-btn .menu-item-with-icon {
+  gap: 6px;
 }
 
 .menu-toggle-btn:hover {
