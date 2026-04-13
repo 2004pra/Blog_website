@@ -651,6 +651,8 @@ export default function VideoFeed() {
       const data = await response.json();
       setCommentsById((prev) => ({ ...prev, [videoId]: Array.isArray(data) ? data : [] }));
     } catch (err) {
+      // Mark as loaded with empty data so we do not keep refetching in a loop.
+      setCommentsById((prev) => ({ ...prev, [videoId]: prev[videoId] ?? [] }));
       setCommentErrorById((prev) => ({
         ...prev,
         [videoId]: err.message || 'Could not load comments.'
@@ -770,12 +772,7 @@ export default function VideoFeed() {
     if (isPlaying) {
       setActiveVideoId(videoId);
       setPlayingVideoId(videoId);
-      setCommentsOpenById((prev) => ({ ...prev, [videoId]: true }));
       incrementViewCount(videoId);
-
-      if (commentsById[videoId] === undefined) {
-        await fetchCommentsForVideo(videoId);
-      }
       return;
     }
 
@@ -792,12 +789,13 @@ export default function VideoFeed() {
     openVideoIds.forEach((videoId) => {
       const hasNoCommentsLoaded = commentsById[videoId] === undefined;
       const hasAuthError = (commentErrorById[videoId] || '').toLowerCase().includes('login');
+      const isLoading = Boolean(commentsLoadingById[videoId]);
 
-      if (hasNoCommentsLoaded || hasAuthError) {
+      if (!isLoading && (hasNoCommentsLoaded || hasAuthError)) {
         fetchCommentsForVideo(videoId);
       }
     });
-  }, [authLoading, token, commentsOpenById, commentsById, commentErrorById]);
+  }, [authLoading, token, commentsOpenById, commentsLoadingById]);
 
   // 1. Handle UI state when waiting for the network
   if (loading) {
@@ -879,7 +877,6 @@ export default function VideoFeed() {
               onCommentChange={handleCommentInputChange}
               onCommentSubmit={handleCommentSubmit}
               onPlaybackChange={handlePlaybackChange}
-              forceCommentsVisible
               layoutMode="focused"
             />
           </div>
