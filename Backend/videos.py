@@ -27,7 +27,8 @@ def createVideo(user_id):
         "video_url":video_url,
          "user_id"    : user_id,
         "created_at" : datetime.utcnow(),
-        "likes":likes
+        "likes":likes,
+        "views":0
     }
     
     db.videos.insert_one(video)
@@ -78,7 +79,9 @@ def get_video():
             "username":username_map.get(video_user_id, "Unknown"),
             "profile_pic_url":profile_pic_map.get(video_user_id),
             "created_at":str(video.get("created_at")),
-            "likes":int(video.get("likes", 0))
+            "likes":int(video.get("likes", 0)),
+            "views":int(video.get("views",0))
+            
         })
         
     return jsonify(result)
@@ -153,7 +156,7 @@ def comment_send(user_id, video_id):
     
     
     
-    
+#video delete route    
 
 @videos_bp.route("/delete/<video_id>",methods=["DELETE"])
 @token_required
@@ -172,6 +175,25 @@ def delete_video(user_id,video_id):
     
     return jsonify({"message":"video deleted successfully ✅"})
 
+
+
+
+
+
+#video views count new route
+
+@videos_bp.route("/videos/views/<video_id>",methods=["POST"])
+@token_required
+def views(user_id,video_id):
+    video = db.videos.find_one({"_id":ObjectId(video_id)})
+    if not video:
+        return jsonify({"error":"video not found"}),404
+    
+    db.videos.update_one(
+        {"_id":ObjectId(video_id)},
+        {"$inc":{"views":1}}
+    )
+    return jsonify({"message":"count updated successfully"})
 
 
 

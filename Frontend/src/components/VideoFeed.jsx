@@ -31,6 +31,7 @@ function extractVideoId(video) {
 function VideoCard({
   video,
   videoKey,
+  viewsCount,
   likesCount,
   isLiked,
   isLiking,
@@ -355,7 +356,7 @@ function VideoCard({
           <p className="channel-name">{username}</p>
           <div className="video-meta-row">
             <p className="video-meta">
-            <span>{Math.floor(Math.random() * 900) + 10}K views</span>
+            <span>{Number(viewsCount ?? 0)} views</span>
             <span>&nbsp;•&nbsp;</span>
             <span>
               {new Date(video.created_at).toLocaleDateString(undefined, {
@@ -449,6 +450,7 @@ export default function VideoFeed() {
   const [activeVideoId, setActiveVideoId] = useState(null);
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [likesById, setLikesById] = useState({});
+  const [viewsById, setViewsById] = useState({});
   const [likedById, setLikedById] = useState({});
   const [likeInFlight, setLikeInFlight] = useState({});
   const [commentsById, setCommentsById] = useState({});
@@ -457,7 +459,30 @@ export default function VideoFeed() {
   const [commentErrorById, setCommentErrorById] = useState({});
   const [commentInputById, setCommentInputById] = useState({});
   const [commentSubmittingById, setCommentSubmittingById] = useState({});
-  const { token } = useContext(AuthContext);
+  const [viewInFlight, setViewInFlight] = useState({});
+  const viewedVideosRef = useRef(new Set());
+  const { token, loading: authLoading, logout } = useContext(AuthContext);
+
+  const handleSessionExpired = (videoId, fallbackMessage = 'Session expired. Please login again.') => {
+    if (videoId) {
+      setCommentErrorById((prev) => ({ ...prev, [videoId]: fallbackMessage }));
+    }
+    logout();
+  };
+
+  const resolveAuthToken = () => {
+    const contextToken = typeof token === 'string' ? token.trim() : '';
+    if (contextToken && contextToken !== 'null' && contextToken !== 'undefined') {
+      return contextToken;
+    }
+
+    const storedToken = (localStorage.getItem('authToken') || '').trim();
+    if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
+      return storedToken;
+    }
+
+    return '';
+  };
 
   // Run exactly once when the component first loads
   useEffect(() => {
@@ -478,6 +503,12 @@ export default function VideoFeed() {
       const videoIds = data
         .map((video) => extractVideoId(video))
         .filter(Boolean);
+
+      const viewCountEntries = data
+        .map((video) => [extractVideoId(video), Number(video?.views || 0)])
+        .filter(([videoId]) => Boolean(videoId));
+
+      setViewsById(Object.fromEntries(viewCountEntries));
 
       const likeCountEntries = await Promise.all(
         videoIds.map(async (videoId) => {
@@ -525,7 +556,9 @@ export default function VideoFeed() {
 
   const handleLike = async (videoId) => {
     if (!videoId) return;
-    if (!token) {
+    const authToken = resolveAuthToken();
+
+    if (!authToken) {
       alert('Please login to like videos.');
       return;
     }
@@ -540,17 +573,21 @@ export default function VideoFeed() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${authToken}`
         }
       });
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleSessionExpired('', 'Session expired. Please login again.');
+          throw new Error('Session expired. Please login again.');
+        }
         throw new Error('Failed to like video');
       }
 
       const statusRes = await fetch(`${API_BASE_URL}/likes/status/${videoId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${authToken}`
         }
       });
 
@@ -581,7 +618,13 @@ export default function VideoFeed() {
   const fetchCommentsForVideo = async (videoId) => {
     if (!videoId) return;
 
-    if (!token) {
+    if (authLoading) {
+      return;
+    }
+
+    const authToken = resolveAuthToken();
+
+    if (!authToken) {
       setCommentErrorById((prev) => ({ ...prev, [videoId]: 'Login required to view comments.' }));
       setCommentsById((prev) => ({ ...prev, [videoId]: [] }));
       return;
@@ -593,13 +636,14 @@ export default function VideoFeed() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/videos/comment/${videoId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${authToken}`
         }
       });
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          throw new Error('Login required to view comments.');
+          handleSessionExpired(videoId, 'Session expired. Please login again.');
+          throw new Error('Session expired. Please login again.');
         }
         throw new Error('Could not load comments.');
       }
@@ -613,6 +657,39 @@ export default function VideoFeed() {
       }));
     } finally {
       setCommentsLoadingById((prev) => ({ ...prev, [videoId]: false }));
+    }
+  };
+
+  const incrementViewCount = async (videoId) => {
+    if (!videoId) return;
+    if (viewInFlight[videoId]) return;
+    if (viewedVideosRef.current.has(videoId)) return;
+
+    const authToken = resolveAuthToken();
+    if (!authToken) return;
+
+    setViewInFlight((prev) => ({ ...prev, [videoId]: true }));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/videos/videos/views/${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleSessionExpired(videoId, 'Session expired. Please login again.');
+        }
+        return;
+      }
+
+      viewedVideosRef.current.add(videoId);
+      setViewsById((prev) => ({ ...prev, [videoId]: Number(prev[videoId] || 0) + 1 }));
+    } finally {
+      setViewInFlight((prev) => ({ ...prev, [videoId]: false }));
     }
   };
 
@@ -639,7 +716,14 @@ export default function VideoFeed() {
 
     if (!text) return;
 
-    if (!token) {
+    if (authLoading) {
+      setCommentErrorById((prev) => ({ ...prev, [videoId]: 'Checking login status. Please try again.' }));
+      return;
+    }
+
+    const authToken = resolveAuthToken();
+
+    if (!authToken) {
       alert('Please login to comment.');
       return;
     }
@@ -654,12 +738,16 @@ export default function VideoFeed() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ comment: text })
       });
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleSessionExpired(videoId, 'Session expired. Please login again.');
+          throw new Error('Session expired. Please login again.');
+        }
         const payload = await response.json().catch(() => ({}));
         throw new Error(payload.error || 'Could not post comment.');
       }
@@ -683,6 +771,7 @@ export default function VideoFeed() {
       setActiveVideoId(videoId);
       setPlayingVideoId(videoId);
       setCommentsOpenById((prev) => ({ ...prev, [videoId]: true }));
+      incrementViewCount(videoId);
 
       if (commentsById[videoId] === undefined) {
         await fetchCommentsForVideo(videoId);
@@ -692,6 +781,23 @@ export default function VideoFeed() {
 
     setPlayingVideoId((prev) => (prev === videoId ? null : prev));
   };
+
+  useEffect(() => {
+    if (authLoading || !resolveAuthToken()) return;
+
+    const openVideoIds = Object.entries(commentsOpenById)
+      .filter(([, isOpen]) => Boolean(isOpen))
+      .map(([videoId]) => videoId);
+
+    openVideoIds.forEach((videoId) => {
+      const hasNoCommentsLoaded = commentsById[videoId] === undefined;
+      const hasAuthError = (commentErrorById[videoId] || '').toLowerCase().includes('login');
+
+      if (hasNoCommentsLoaded || hasAuthError) {
+        fetchCommentsForVideo(videoId);
+      }
+    });
+  }, [authLoading, token, commentsOpenById, commentsById, commentErrorById]);
 
   // 1. Handle UI state when waiting for the network
   if (loading) {
@@ -755,6 +861,7 @@ export default function VideoFeed() {
               key={extractVideoId(focusedVideo) || focusedVideo.video_url}
               video={focusedVideo}
               videoKey={extractVideoId(focusedVideo) || focusedVideo.video_url}
+              viewsCount={Number(viewsById[extractVideoId(focusedVideo)] ?? focusedVideo?.views ?? 0)}
               likesCount={Number(likesById[extractVideoId(focusedVideo)] ?? 0)}
               isLiked={Boolean(likedById[extractVideoId(focusedVideo)])}
               isLiking={Boolean(likeInFlight[extractVideoId(focusedVideo)])}
@@ -786,6 +893,7 @@ export default function VideoFeed() {
                   key={videoKey}
                   video={video}
                   videoKey={videoKey}
+                  viewsCount={Number(viewsById[videoId] ?? video?.views ?? 0)}
                   likesCount={Number(likesById[videoId] ?? 0)}
                   isLiked={Boolean(likedById[videoId])}
                   isLiking={Boolean(likeInFlight[videoId])}
@@ -819,6 +927,7 @@ export default function VideoFeed() {
               key={videoKey}
               video={video}
               videoKey={videoKey}
+              viewsCount={Number(viewsById[videoId] ?? video?.views ?? 0)}
               likesCount={Number(likesById[videoId] ?? 0)}
               isLiked={Boolean(likedById[videoId])}
               isLiking={Boolean(likeInFlight[videoId])}

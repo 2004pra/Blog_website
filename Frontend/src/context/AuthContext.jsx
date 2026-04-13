@@ -9,6 +9,29 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const clearPersistedAuth = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('profilePicUrl');
+  };
+
+  const isTokenExpired = (authToken) => {
+    if (!authToken || typeof authToken !== 'string') return true;
+
+    try {
+      const parts = authToken.split('.');
+      if (parts.length !== 3) return true;
+
+      const payload = JSON.parse(atob(parts[1]));
+      const exp = Number(payload?.exp);
+      if (!Number.isFinite(exp)) return true;
+
+      return exp * 1000 <= Date.now();
+    } catch {
+      return true;
+    }
+  };
+
   const hydrateProfilePicture = async (authToken, baseUser) => {
     if (!authToken || !baseUser?.id) return baseUser;
 
@@ -48,6 +71,14 @@ export function AuthProvider({ children }) {
       const savedUser = localStorage.getItem('user');
 
       if (savedToken && savedUser) {
+        if (isTokenExpired(savedToken)) {
+          clearPersistedAuth();
+          setToken(null);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
         try {
           const parsedUser = JSON.parse(savedUser);
           setToken(savedToken);
@@ -56,6 +87,7 @@ export function AuthProvider({ children }) {
           const hydratedUser = await hydrateProfilePicture(savedToken, parsedUser);
           setUser(hydratedUser);
         } catch {
+          clearPersistedAuth();
           setToken(null);
           setUser(null);
         }
@@ -138,8 +170,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    clearPersistedAuth();
     localStorage.removeItem('userCharacter');
   };
 
