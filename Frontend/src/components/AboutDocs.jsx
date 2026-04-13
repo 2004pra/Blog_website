@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../styles/AboutDocs.css';
 
 export default function AboutDocs() {
@@ -8,7 +9,7 @@ export default function AboutDocs() {
         <h1>What This Platform Is, How It Is Built, And The Ground Rules</h1>
         <p>
           Koma is a social platform for sharing thoughts through written posts and video blogs.
-          It is currently evolving, and some social features are still in progress.
+          It is currently evolving with active social features and upcoming real-time communication features.
         </p>
         <p>
           Created by Prashant Mishra  GitHub:{' '}
@@ -42,12 +43,13 @@ export default function AboutDocs() {
             <li>Upload and watch video blogs</li>
             <li>Like and comment on videos</li>
             <li>Profile page with custom profile photo</li>
+            <li>Followers and following with public profile navigation</li>
             <li>Responsive feed and dashboard UI</li>
           </ul>
         </article>
 
         <article className="aboutdocs-card">
-          <h2>Rules And Regulations (Draft)</h2>
+          <h2>Rules And Regulations</h2>
           <ul>
             <li>No hate speech, harassment, or abusive content</li>
             <li>No explicit or illegal material</li>
@@ -55,16 +57,20 @@ export default function AboutDocs() {
             <li>Respect copyright and content ownership</li>
             <li>Spam, scams, and misleading promotions are not allowed</li>
             <li>Repeated violations may lead to content removal or account restriction</li>
+            <li>
+              Read the complete policy page:{' '}
+              <Link className="aboutdocs-mail-link" to="/terms-policies">Terms And Policies</Link>
+            </li>
           </ul>
         </article>
 
         <article className="aboutdocs-card">
           <h2>In Progress</h2>
           <ul>
-            <li>Followers and following system</li>
+            <li>Real-time chat system</li>
             <li>Stronger moderation and reporting workflow</li>
             <li>More profile and community discovery features</li>
-            <li>Policy pages with finalized legal text</li>
+            <li>Notifications and richer interaction tools</li>
           </ul>
         </article>
 

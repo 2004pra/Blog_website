@@ -37,7 +37,7 @@ export default function CreatePost() {
         throw new Error('Failed to create post');
       }
 
-      alert('Post created successfully! 🎉');
+      alert('Post created successfully.');
       navigate('/profile');
     } catch (err) {
       setError(err.message || 'Error creating post');
@@ -49,7 +49,7 @@ export default function CreatePost() {
   return (
     <div className="post-form-container">
       <div className="post-form-card">
-        <h1>✍️ Create a New Post</h1>
+        <h1>Create a New Post</h1>
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="post-form">
@@ -93,7 +93,7 @@ export default function CreatePost() {
               Cancel
             </button>
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Publishing...' : 'Publish Post 🚀'}
+              {loading ? 'Publishing...' : 'Publish Post'}
             </button>
           </div>
         </form>

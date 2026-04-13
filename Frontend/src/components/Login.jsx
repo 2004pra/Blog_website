@@ -29,7 +29,7 @@ export default function Login() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Welcome Back! 👋</h1>
+        <h1>Welcome Back</h1>
         <p className="auth-subtitle">Login to your account</p>
 
         {error && <div className="error-message">{error}</div>}
@@ -68,6 +68,10 @@ export default function Login() {
 
         <p className="auth-link">
           Don't have an account? <Link to="/signup">Sign up here</Link>
+        </p>
+
+        <p className="auth-policy-link">
+          By continuing, you agree to our <Link to="/terms-policies">Terms and Policies</Link>.
         </p>
       </div>
     </div>

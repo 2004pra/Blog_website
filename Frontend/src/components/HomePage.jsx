@@ -125,7 +125,12 @@ export default function HomePage() {
           <p>Share your thoughts. Share your story. Grow with the community.</p>
         </div>
         <div className="explore-footer-right">
-          <p>Coming soon: Followers, Following, and richer social connections.</p>
+          <p>Followers and Following are now live on profile pages.</p>
+          <p>Now in progress: real-time chat system.</p>
+          <p>
+            Read platform rules:{' '}
+            <a className="footer-mail-link" href="/terms-policies">Terms And Policies</a>
+          </p>
           <p>
             Report suspicious activity:{' '}
             <a className="footer-mail-link" href="mailto:support@koma.app">support@koma.app</a>

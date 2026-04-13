@@ -216,7 +216,7 @@ export default function Profile() {
       if (!response.ok) throw new Error("Failed to delete video");
       
       setUserVideos((prevVideos) => prevVideos.filter((video) => video.id !== videoId));
-      alert("Video deleted successfully! ✅");
+      alert("Video deleted successfully.");
     } catch(err) {
       alert("Error deleting video.");
     }
@@ -251,7 +251,7 @@ export default function Profile() {
           ) : user.avatar ? (
             <img src={user.avatar} alt={user.username} />
           ) : (
-            <span>👤</span>
+            <span>U</span>
           )}
         </div>
         <div className="profile-info">
@@ -274,7 +274,7 @@ export default function Profile() {
       </div>
 
       <div className="profile-section">
-        <h2>👥 Followers & Following</h2>
+        <h2>Followers and Following</h2>
         <div className="profile-follow-controls">
           <button
             type="button"
@@ -342,7 +342,7 @@ export default function Profile() {
       </div>
 
       <div className="profile-section">
-        <h2>📝 My Posts</h2>
+        <h2>My Posts</h2>
 
         {loading && <p className="loading">Loading your posts...</p>}
         {error && <p className="error">{error}</p>}
@@ -369,7 +369,7 @@ export default function Profile() {
       </div>
 
       <div className="profile-section">
-        <h2>🎬 My Videos</h2>
+        <h2>My Videos</h2>
         
         {loading && <p className="loading">Loading your videos...</p>}
         {error && <p className="error">{error}</p>}
@@ -406,7 +406,7 @@ export default function Profile() {
                     <p className="profile-video-author">by {video.username || video.user_id || 'Unknown'}</p>
                   </div>
                   <button className="delete-btn" onClick={() => handleVideoDelete(video.id)}>
-                    🗑️ Delete
+                    Delete
                   </button>
                 </div>
               </div>

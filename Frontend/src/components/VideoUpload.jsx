@@ -117,7 +117,7 @@ export default function VideoUpload() {
             throw new Error(data.error || 'Failed to save to database');
           }
 
-          alert('Video uploaded successfully! 🎉');
+          alert('Video uploaded successfully.');
           navigate('/videos');
         } catch (err) {
           setError(err.message || 'Error saving video to backend');
@@ -141,7 +141,7 @@ export default function VideoUpload() {
   return (
     <div className="video-form-container">
       <div className="video-form-card">
-        <h2>Upload Video Blog 🎬</h2>
+        <h2>Upload Video Blog</h2>
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>

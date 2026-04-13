@@ -153,10 +153,10 @@ export default function Navbar() {
                 {user ? (
                   <>
                     <Link to="/create-post" className="create-menu-item" onClick={closeCreateMenu}>
-                      ✍️ Write Post
+                      Write Post
                     </Link>
                     <Link to="/upload-video" className="create-menu-item" onClick={closeCreateMenu}>
-                      🎬 Upload Video
+                      Upload Video
                     </Link>
                   </>
                 ) : (
@@ -188,7 +188,7 @@ export default function Navbar() {
                     }}
                   />
                 ) : (
-                  <div className="avatar-placeholder">👤</div>
+                  <div className="avatar-placeholder">U</div>
                 )}
               </div>
               <span className="username">{user.username}</span>
@@ -215,19 +215,20 @@ export default function Navbar() {
         </div>
 
         <div className="drawer-section" aria-label="Main navigation">
-          <Link to="/" className="drawer-link" onClick={closeDrawer}>🏠 Explore</Link>
-          <Link to="/videos" className="drawer-link" onClick={closeDrawer}>🎥 Videos</Link>
-          <Link to="/about" className="drawer-link" onClick={closeDrawer}>ℹ️ About</Link>
+          <Link to="/" className="drawer-link" onClick={closeDrawer}>Explore</Link>
+          <Link to="/videos" className="drawer-link" onClick={closeDrawer}>Videos</Link>
+          <Link to="/about" className="drawer-link" onClick={closeDrawer}>About</Link>
+          <Link to="/terms-policies" className="drawer-link" onClick={closeDrawer}>Terms And Policies</Link>
         </div>
 
         <div className="drawer-links">
           {user ? (
             <>
-              <Link to="/create-post" className="drawer-link" onClick={closeDrawer}>✍️ Create Post</Link>
-              <Link to="/upload-video" className="drawer-link" onClick={closeDrawer}>🎬 Upload Video</Link>
-              <Link to="/profile" className="drawer-link" onClick={closeDrawer}>👤 Profile</Link>
+              <Link to="/create-post" className="drawer-link" onClick={closeDrawer}>Create Post</Link>
+              <Link to="/upload-video" className="drawer-link" onClick={closeDrawer}>Upload Video</Link>
+              <Link to="/profile" className="drawer-link" onClick={closeDrawer}>Profile</Link>
               <button className="drawer-link drawer-theme-btn" onClick={toggleTheme}>
-                {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                {isDark ? 'Light Mode' : 'Dark Mode'}
               </button>
               <button className="drawer-link drawer-logout-btn" onClick={handleLogout}>Logout</button>
             </>
@@ -236,7 +237,7 @@ export default function Navbar() {
               <Link to="/login" className="drawer-link" onClick={closeDrawer}>Sign In</Link>
               <Link to="/signup" className="drawer-link" onClick={closeDrawer}>Get Started</Link>
               <button className="drawer-link drawer-theme-btn" onClick={toggleTheme}>
-                {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                {isDark ? 'Light Mode' : 'Dark Mode'}
               </button>
             </>
           )}

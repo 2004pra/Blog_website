@@ -123,11 +123,11 @@ function VideoCard({
       await el.play();
       onPlayStart(videoKey);
       setIsPlaying(true);
-      setSeekHint('▶');
+      setSeekHint('Play');
     } else {
       el.pause();
       setIsPlaying(false);
-      setSeekHint('⏸');
+      setSeekHint('Pause');
     }
   };
 
@@ -144,7 +144,7 @@ function VideoCard({
     const target = Math.max(0, Math.min(el.currentTime + seconds, duration || el.duration || 0));
     el.currentTime = target;
     setCurrentTime(target);
-    setSeekHint(seconds > 0 ? '⏩ 5s' : '⏪ 5s');
+    setSeekHint(seconds > 0 ? 'Forward 5s' : 'Back 5s');
   };
 
   const onSeek = (event) => {
@@ -231,7 +231,7 @@ function VideoCard({
           }}
         />
 
-        {!isPlaying && <div className="center-play-icon">▶</div>}
+        {!isPlaying && <div className="center-play-icon">Play</div>}
         {seekHint && <div className="seek-hint">{seekHint}</div>}
 
         {showDescription && descriptionText && (
@@ -260,15 +260,15 @@ function VideoCard({
                 onClick={togglePlay}
                 aria-label={isPlaying ? 'Pause video' : 'Play video'}
               >
-                {isPlaying ? '⏸' : '▶'}
+                {isPlaying ? 'Pause' : 'Play'}
               </button>
               {isFullscreen && (
                 <>
                   <button type="button" className="ctrl-btn" onClick={() => skipBy(-5)}>
-                    ⏪ 5s
+                    Back 5s
                   </button>
                   <button type="button" className="ctrl-btn" onClick={() => skipBy(5)}>
-                    5s ⏩
+                    Forward 5s
                   </button>
                 </>
               )}
@@ -294,7 +294,7 @@ function VideoCard({
                   onClick={() => setShowMenu((prev) => !prev)}
                   aria-label="Open video options"
                 >
-                  ⋮
+                  More
                 </button>
                 {showMenu && (
                   <div className="menu-popover">
@@ -390,7 +390,7 @@ function VideoCard({
                 aria-label={isLiked ? 'Unlike video' : 'Like video'}
                 title={isLiked ? 'Unlike' : 'Like'}
               >
-                <span className="video-like-icon">♥</span>
+                <span className="video-like-icon">Like</span>
                 <span className="video-like-count">{likesCount}</span>
               </button>
               <button
@@ -400,7 +400,7 @@ function VideoCard({
                 aria-label="Open comments"
                 title="Comments"
               >
-                <span className="video-comment-icon">💬</span>
+                <span className="video-comment-icon">Comment</span>
                 <span className="video-comment-count">{commentCount}</span>
               </button>
             </div>

@@ -42,7 +42,7 @@ export default function Signup() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Join Our Community! 🚀</h1>
+        <h1>Join Our Community</h1>
         <p className="auth-subtitle">Create your account to start blogging</p>
 
         {error && <div className="error-message">{error}</div>}
@@ -94,6 +94,10 @@ export default function Signup() {
 
         <p className="auth-link">
           Already have an account? <Link to="/login">Login here</Link>
+        </p>
+
+        <p className="auth-policy-link">
+          By creating an account, you agree to our <Link to="/terms-policies">Terms and Policies</Link>.
         </p>
       </div>
     </div>
