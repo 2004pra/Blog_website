@@ -1,0 +1,462 @@
+{
+  "info": {
+    "name": "Koma API",
+    "_postman_id": "6c2603e2-7bc5-4f80-8e2f-77e26713dbe9",
+    "description": "Postman collection for Koma social media authentication and CRUD APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"john\",\n  \"password\": \"secret123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/signup",
+          "host": ["{{baseUrl}}"],
+          "path": ["signup"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"john\",\n  \"password\": \"secret123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "if (jsonData.token) {",
+              "  pm.environment.set('jwtToken', jsonData.token);",
+              "}",
+              "if (jsonData.user && jsonData.user.id) {",
+              "  pm.environment.set('userId', jsonData.user.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts - Get All",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/posts/",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", ""]
+        }
+      }
+    },
+    {
+      "name": "Posts - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"My assignment post\",\n  \"content\": \"Created via Postman\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/posts/create_post",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "create_post"]
+        }
+      }
+    },
+    {
+      "name": "Posts - Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated title\",\n  \"content\": \"Updated content\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/posts/update/{{postId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "update", "{{postId}}"]
+        }
+      }
+    },
+    {
+      "name": "Posts - Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/posts/delete/{{postId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "delete", "{{postId}}"]
+        }
+      }
+    },
+    {
+      "name": "Profile - Current User",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["profile"]
+        }
+      }
+    },
+    {
+      "name": "Profile - Update Profile Picture",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"profile_pic_url\": \"https://example.com/avatar.png\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/profilepic",
+          "host": ["{{baseUrl}}"],
+          "path": ["profilepic"]
+        }
+      }
+    },
+    {
+      "name": "Users - Public Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["users", "{{userId}}", "profile"]
+        }
+      }
+    },
+    {
+      "name": "Follow - Toggle",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/follow/{{targetUserId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["follow", "{{targetUserId}}"]
+        }
+      }
+    },
+    {
+      "name": "Follow - View Followers and Following",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/follow/view/{{targetUserId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["follow", "view", "{{targetUserId}}"]
+        }
+      }
+    },
+    {
+      "name": "Videos - Get Feed",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", ""]
+        }
+      }
+    },
+    {
+      "name": "Videos - Upload Video",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"My video\",\n  \"description\": \"Video description\",\n  \"video_url\": \"https://example.com/video.mp4\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/Upload_video",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", "Upload_video"]
+        }
+      }
+    },
+    {
+      "name": "Videos - Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/delete/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", "delete", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Videos - Increment Views",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/videos/views/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", "videos", "views", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Comments - Add",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"comment\": \"Nice video!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/comment/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", "comment", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Comments - Get",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/videos/comment/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "videos", "comment", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Likes - Toggle",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/likes/likes/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["likes", "likes", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Likes - Count",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/likes/like_count/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["likes", "like_count", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "Likes - Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/likes/status/{{videoId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["likes", "status", "{{videoId}}"]
+        }
+      }
+    },
+    {
+      "name": "System - Root",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": ["{{baseUrl}}"],
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "System - Loader Verification",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/loaderio-2483443819ae1f94373f67a615c11501.txt",
+          "host": ["{{baseUrl}}"],
+          "path": ["loaderio-2483443819ae1f94373f67a615c11501.txt"]
+        }
+      }
+    },
+    {
+      "name": "Upload - Cloud Signature",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/get-signature",
+          "host": ["{{baseUrl}}"],
+          "path": ["get-signature"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://blog-website-backend-tkt1.onrender.com"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
+    },
+    {
+      "key": "postId",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "targetUserId",
+      "value": ""
+    },
+    {
+      "key": "videoId",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: Koma API
+  version: 1.0.0
+  description: >-
+    Authentication and content APIs for Koma social media platform. This spec documents
+    assignment-relevant auth and CRUD flows.
+servers:
+  - url: https://blog-website-backend-tkt1.onrender.com
+    description: Production (Render)
+  - url: http://127.0.0.1:5000
+    description: Local development
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SignupRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: john
+        password:
+          type: string
+          example: secret123
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+    CreatePostRequest:
+      type: object
+      required: [title, content]
+      properties:
+        title:
+          type: string
+          example: My first post
+        content:
+          type: string
+          example: This is my post body.
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+paths:
+  /signup:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Validation or duplicate user error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Login and get JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '403':
+          description: Invalid credentials
+
+  /posts/:
+    get:
+      tags: [Posts]
+      summary: Get all posts
+      responses:
+        '200':
+          description: Posts list
+
+  /posts/create_post:
+    post:
+      tags: [Posts]
+      summary: Create a post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '200':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Missing fields
+        '401':
+          description: Unauthorized
+
+  /posts/update/{post_id}:
+    put:
+      tags: [Posts]
+      summary: Update own post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '200':
+          description: Post updated
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Post not found
+
+  /posts/delete/{post_id}:
+    delete:
+      tags: [Posts]
+      summary: Delete own post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Post not found
+
+  /profile:
+    get:
+      tags: [Profile]
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile payload
+
+  /users/{user_id}/profile:
+    get:
+      tags: [Profile]
+      summary: Get public profile by user id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public profile payload
+        '400':
+          description: Invalid user id
+        '404':
+          description: User not found
+
+  /follow/{target_user_id}:
+    post:
+      tags: [Follow]
+      summary: Toggle follow or unfollow
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Follow state updated
+
+  /follow/view/{target_user_id}:
+    get:
+      tags: [Follow]
+      summary: Get followers and following for target user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Follow graph payload
+        '400':
+          description: Invalid user id
+        '404':
+          description: User not found
+
+  /profilepic:
+    post:
+      tags: [Profile]
+      summary: Update current user profile picture URL
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [profile_pic_url]
+              properties:
+                profile_pic_url:
+                  type: string
+      responses:
+        '200':
+          description: Profile picture updated
+        '400':
+          description: Missing profile image URL
+
+  /api/videos/:
+    get:
+      tags: [Videos]
+      summary: Get videos feed
+      responses:
+        '200':
+          description: Videos list
+
+  /api/videos/Upload_video:
+    post:
+      tags: [Videos]
+      summary: Create video entry
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description, video_url]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                video_url:
+                  type: string
+      responses:
+        '200':
+          description: Video created
+
+  /api/videos/comment/{video_id}:
+    post:
+      tags: [Comments]
+      summary: Add comment to a video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Comment created
+        '400':
+          description: Invalid input
+        '404':
+          description: Video not found
+    get:
+      tags: [Comments]
+      summary: Get comments for a video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comments list
+        '400':
+          description: Invalid video id
+        '404':
+          description: Video not found
+
+  /api/videos/delete/{video_id}:
+    delete:
+      tags: [Videos]
+      summary: Delete own video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Video deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Video not found
+
+  /api/videos/videos/views/{video_id}:
+    post:
+      tags: [Videos]
+      summary: Increment views for a video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: View count incremented
+        '404':
+          description: Video not found
+
+  /likes/likes/{video_id}:
+    post:
+      tags: [Likes]
+      summary: Toggle like or unlike for a video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like state updated
+
+  /likes/like_count/{video_id}:
+    get:
+      tags: [Likes]
+      summary: Get like count for a video
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like count payload
+
+  /likes/status/{video_id}:
+    get:
+      tags: [Likes]
+      summary: Get current user like status for a video
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like status payload
+
+  /get-signature:
+    get:
+      tags: [Upload]
+      summary: Get Cloudinary signed upload params
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Signature payload
+
+  /:
+    get:
+      tags: [System]
+      summary: Root greeting endpoint
+      responses:
+        '200':
+          description: Service greeting
+
+  /loaderio-2483443819ae1f94373f67a615c11501.txt:
+    get:
+      tags: [System]
+      summary: Loader.io verification file endpoint
+      responses:
+        '200':
+          description: Verification text file

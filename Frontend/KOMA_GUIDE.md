@@ -1,7 +1,7 @@
-# 🚀 BlogHub - Professional Blog Platform Frontend
+# 🚀 Koma - Social Media Platform Frontend
 
 ## Overview
-A complete, production-ready blog platform frontend built with React, featuring user authentication, post creation, and profile management.
+A complete, production-ready social media frontend built with React, featuring user authentication, post creation, and profile management.
 
 ---
 
@@ -13,7 +13,7 @@ A complete, production-ready blog platform frontend built with React, featuring 
 - **Auth Context** - Global state management for user sessions
 - **Protected Routes** - Private pages require authentication
 
-### 📝 Blog Features
+### 📝 Social Features
 - **Home Page** - Beautiful hero section with all posts
 - **Create Post** - Rich post creation form with character limits
 - **Profile Page** - User dashboard showing their posts

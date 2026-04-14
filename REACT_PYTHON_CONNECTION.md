@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-Your blog application has two separate parts:
+Your social media application has two separate parts:
 - **Backend**: Python (Flask) running on `http://localhost:5000`
 - **Frontend**: React + Vite running on `http://localhost:5173`
 
@@ -34,15 +34,15 @@ export const fetchPosts = async () => {
 
 ### 2. **Key API Methods Created**
 
-#### `fetchPosts()` - Get all posts
+#### `fetchPosts()` - Get all feed posts
 - **Endpoint**: `GET /posts/`
-- **Purpose**: Retrieve all blog posts from the database
+- **Purpose**: Retrieve all social feed posts from the database
 - **Returns**: Array of post objects with id, title, content
 
-#### `createPost(title, content, token)` - Create a new post
+#### `createPost(title, content, token)` - Create a new feed post
 - **Endpoint**: `POST /posts/create_post`
 - **Headers**: Includes Authorization token (Bearer token from login)
-- **Purpose**: Create a new blog post
+- **Purpose**: Create a new feed post
 - **Requires**: User authentication token
 
 #### `deletePost(postId, token)` - Delete a post
@@ -52,7 +52,7 @@ export const fetchPosts = async () => {
 
 #### `updatePost(postId, title, content, token)` - Update a post
 - **Endpoint**: `PUT /posts/update/{postId}`
-- **Purpose**: Update existing blog post
+- **Purpose**: Update existing post
 - **Requires**: User must own the post
 
 #### `signup(username, password)` - Register new user
@@ -65,8 +65,8 @@ export const fetchPosts = async () => {
 
 ### 3. **Frontend Components**
 
-#### `HomePage.jsx` - Main Page
-- **Purpose**: Displays all blog posts
+#### `HomePage.jsx` - Feed Page
+- **Purpose**: Displays all feed posts
 - **Features**:
   - Fetches posts on component mount using `useEffect`
   - Shows loading state while fetching
@@ -101,7 +101,7 @@ React receives JSON and setState(posts)
        ↓
 Components re-render with post data
        ↓
-User sees blog posts on screen
+User sees feed posts on screen
 ```
 
 ### 5. **CORS Configuration**
