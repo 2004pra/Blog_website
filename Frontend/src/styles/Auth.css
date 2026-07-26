@@ -1,5 +1,9 @@
+/* ============================================================
+   AUTH — Tumblr Design System
+   ============================================================ */
+
 .auth-container {
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - 64px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,44 +14,48 @@
 .auth-card {
   background: var(--bg-secondary);
   width: 100%;
-  max-width: 440px;
-  padding: 40px;
-  border-radius: 28px;
-  box-shadow: var(--shadow-md);
+  max-width: 420px;
+  padding: 36px;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-sm), var(--shadow-md);
   border: 1px solid var(--border-color);
   text-align: center;
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeIn 0.35s ease forwards;
 }
 
 .auth-card h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 21px;
+  font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: 8px;
-  letter-spacing: -1px;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 }
 
 .auth-subtitle {
   color: var(--text-secondary);
-  margin-bottom: 32px;
-  font-size: 1.05rem;
+  margin-bottom: 28px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
+/* ── Error ── */
 .error-message {
-  background: rgba(255, 59, 48, 0.1);
-  color: #FF3B30;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  background: rgba(255, 73, 48, 0.1);
+  color: #ff6b55;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 18px;
   font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid rgba(255, 59, 48, 0.2);
+  font-size: 13px;
+  border: 1px solid rgba(255, 73, 48, 0.2);
+  text-align: left;
 }
 
+/* ── Form ── */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-group {
@@ -56,81 +64,94 @@
 
 .form-group label {
   display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  letter-spacing: 0.01em;
 }
 
-.form-group input, .form-group textarea {
+.form-group input,
+.form-group textarea {
   width: 100%;
   background: var(--input-bg);
-  border: 1px solid transparent;
-  padding: 14px 16px;
-  border-radius: 12px;
-  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  border-radius: var(--input-radius);
+  font-size: 14px;
   color: var(--text-primary);
-  transition: all 0.2s ease;
+  font-family: var(--font-family);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-group input:focus, .form-group textarea:focus {
-  background: var(--bg-secondary);
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  background: var(--input-bg);
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-tint);
   outline: none;
 }
 
+/* ── Submit button ── */
 .submit-btn {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  padding: 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-radius: 16px;
-  margin-top: 10px;
+  background: var(--accent-color);
+  color: #000000;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--btn-radius);
+  margin-top: 6px;
   width: 100%;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  font-family: var(--font-family);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  opacity: 0.9;
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* ── Links ── */
 .auth-link {
-  margin-top: 24px;
+  margin-top: 20px;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 13px;
 }
 
 .auth-link a {
   color: var(--accent-color);
-  font-weight: 600;
-  margin-left: 6px;
+  font-weight: 500;
+  margin-left: 4px;
 }
 
 .auth-link a:hover {
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 
 .auth-policy-link {
   margin-top: 10px;
   color: var(--text-secondary);
-  font-size: 0.86rem;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 .auth-policy-link a {
   color: var(--accent-color);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .auth-policy-link a:hover {

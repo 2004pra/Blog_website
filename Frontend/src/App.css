@@ -1,44 +1,88 @@
-#root {
+/* ── App layout — Tumblr-style two column ── */
+.app-layout {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;          /* lock to viewport — only inner columns scroll */
+  overflow: hidden;
 }
 
+/* Main content column — this is the ONLY thing that scrolls */
+.app-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-y: auto;       /* independent vertical scroll */
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Mobile: revert to normal page scroll (no sidebar) ── */
+@media (max-width: 768px) {
+  .app-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  .app-main {
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+}
+
+
+/* ── Primary Button — Tumblr pill with cyan accent ── */
 .primary-btn {
   background: var(--accent-color);
-  color: white;
-  padding: 12px 24px;
-  font-size: 16px;
-  box-shadow: 0 8px 24px -10px rgba(79, 105, 246, 0.72);
+  color: #000000;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--btn-radius);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .primary-btn:hover {
   background: var(--accent-hover);
-  box-shadow: 0 12px 28px -12px rgba(66, 89, 209, 0.7);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
+/* ── Secondary Button ── */
 .secondary-btn {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: transparent;
+  color: var(--text-secondary);
   border: 1px solid var(--border-color);
-  padding: 12px 24px;
-  font-size: 16px;
-  box-shadow: var(--shadow-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: border-color 0.2s, color 0.2s;
 }
 
 .secondary-btn:hover {
-  border-color: var(--text-secondary);
-  transform: translateY(-2px);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
+/* ── Danger Button ── */
 .danger-btn {
-  background: rgba(255, 59, 48, 0.1);
-  color: #FF3B30;
-  padding: 12px 24px;
+  background: rgba(255, 73, 48, 0.12);
+  color: #ff4930;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: var(--btn-radius);
+  border: 1px solid rgba(255, 73, 48, 0.25);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.2s, color 0.2s;
 }
 
 .danger-btn:hover {
-  background: #FF3B30;
-  color: white;
+  background: #ff4930;
+  color: #fff;
+  border-color: #ff4930;
 }

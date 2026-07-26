@@ -1,34 +1,41 @@
+/* ============================================================
+   PROFILE — Tumblr Design System
+   ============================================================ */
+
 .profile-container {
-  width: min(1100px, 96vw);
-  margin: 28px auto 40px;
-  padding: 0 20px;
+  width: min(1100px, 96%);
+  margin: 24px auto 48px;
+  padding: 0 16px;
 }
 
+/* ── Header ── */
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
   background: var(--bg-secondary);
-  padding: 30px;
+  padding: 28px;
   border-radius: var(--card-radius);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
+/* ── Avatar ── */
 .profile-avatar {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--bg-secondary);
-  box-shadow: 0 0 0 4px var(--accent-color);
+  border: 2px solid var(--bg-secondary);
+  box-shadow: 0 0 0 3px var(--accent-color);
   background: var(--input-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
+  font-size: 3rem;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .profile-avatar img {
@@ -37,14 +44,16 @@
   object-fit: cover;
 }
 
+/* ── Info ── */
 .profile-info {
   flex-grow: 1;
+  min-width: 0;
 }
 
 .profile-info h1 {
-  font-size: clamp(1.8rem, 4.2vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -1px;
+  font-size: clamp(18px, 4vw, 26px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
   color: var(--text-primary);
   margin-bottom: 8px;
   word-break: break-word;
@@ -52,82 +61,89 @@
 
 .profile-stats {
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  font-size: 13px;
   background: var(--input-bg);
   display: inline-block;
-  padding: 8px 16px;
-  border-radius: 999px;
+  padding: 5px 12px;
+  border-radius: var(--btn-radius);
   font-weight: 500;
+  border: 1px solid var(--border-color);
 }
 
+/* ── Pic button ── */
 .profile-pic-btn {
   margin-top: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
-  border-radius: 999px;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--btn-radius);
   background: var(--accent-color);
-  color: #fff;
-  font-size: 0.92rem;
-  font-weight: 600;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  border: none;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .profile-pic-btn:hover {
-  opacity: 0.9;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
-.profile-pic-btn input[type="file"] {
-  display: none;
-}
+.profile-pic-btn input[type="file"] { display: none; }
 
 .profile-pic-btn.disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
+/* ── Follow stats ── */
 .profile-follow-stats {
   margin-top: 10px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .profile-follow-stats span {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 12px;
   background: var(--input-bg);
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 4px 10px;
+  border-radius: var(--btn-radius);
   border: 1px solid var(--border-color);
 }
 
+/* ── Follow grid ── */
 .profile-follow-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
 }
 
 .profile-follow-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .profile-follow-toggle-btn {
   border: 1px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 0.88rem;
-  font-weight: 600;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--btn-radius);
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
 }
 
 .profile-follow-toggle-btn:hover {
@@ -140,20 +156,23 @@
   border: 1px solid var(--border-color);
   border-radius: var(--card-radius);
   padding: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .profile-follow-card h3 {
   margin: 0 0 10px;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .profile-follow-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 16px;
   color: var(--text-secondary);
   display: grid;
   gap: 4px;
+  font-size: 13px;
 }
 
 .profile-follow-user-btn {
@@ -161,8 +180,10 @@
   padding: 0;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.92rem;
+  font-size: 13px;
+  font-family: var(--font-family);
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .profile-follow-user-btn:hover {
@@ -172,28 +193,33 @@
 .profile-follow-empty {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 13px;
 }
 
+/* ── Section heading ── */
 .profile-section h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 21px;
+  font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
 }
 
-.loading, .error {
+/* ── States ── */
+.loading,
+.error {
   text-align: center;
-  padding: 40px;
+  padding: 36px;
   color: var(--text-secondary);
   background: var(--bg-secondary);
   border-radius: var(--card-radius);
   border: 1px solid var(--border-color);
+  font-size: 14px;
 }
 
 .no-posts {
   text-align: center;
-  padding: 60px 20px;
+  padding: 52px 20px;
   background: var(--bg-secondary);
   border-radius: var(--card-radius);
   border: 1px dashed var(--border-color);
@@ -201,49 +227,58 @@
 
 .no-posts p {
   color: var(--text-secondary);
-  font-size: 1.1rem;
-  margin-bottom: 24px;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
+/* ── Create button ── */
 .create-btn {
   background: var(--accent-color);
-  color: #fff;
-  padding: 14px 28px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  color: #000000;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
   border-radius: var(--btn-radius);
-  box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.39);
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-family: var(--font-family);
+  transition: background 0.2s, transform 0.2s;
 }
 
 .create-btn:hover {
   background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.23);
+  transform: translateY(-1px);
 }
 
+/* ── Grids ── */
 .my-posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
 }
 
 .my-videos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
+/* ── Video card ── */
 .profile-video-card {
   background: var(--bg-secondary);
   border-radius: var(--card-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.profile-video-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-md);
 }
 
 .video-thumb-container {
@@ -255,10 +290,8 @@
 
 .profile-video-player {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   object-fit: cover;
 }
 
@@ -279,9 +312,10 @@
 }
 
 .profile-video-info h4 {
-  font-size: 0.95rem;
+  font-size: 13px;
   color: var(--text-primary);
   margin: 0;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -289,106 +323,57 @@
 }
 
 .profile-video-author {
-  font-size: 0.78rem;
+  font-size: 11px;
   color: var(--text-secondary);
   margin: 0;
 }
 
+/* ── Delete button ── */
 .delete-btn {
-  background: #ff4757;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
+  background: rgba(255, 73, 48, 0.1);
+  color: #ff6b55;
+  border: 1px solid rgba(255, 73, 48, 0.2);
+  border-radius: var(--btn-radius);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background 0.2s;
+  white-space: nowrap;
 }
 
 .delete-btn:hover {
-  opacity: 0.8;
+  background: rgba(255, 73, 48, 0.2);
 }
 
+/* ── Responsive ── */
 @media (max-width: 900px) {
-  .profile-container {
-    padding: 0 12px;
-  }
-
-  .profile-header {
-    gap: 18px;
-    padding: 22px;
-  }
-
-  .profile-avatar {
-    width: 112px;
-    height: 112px;
-    font-size: 3rem;
-  }
-
-  .profile-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 16px;
-  }
+  .profile-container { padding: 0 10px; }
+  .profile-header { gap: 16px; padding: 20px; }
+  .profile-avatar { width: 100px; height: 100px; font-size: 2.4rem; }
+  .profile-section h2 { font-size: 18px; }
 }
 
 @media (max-width: 640px) {
-  .profile-container {
-    margin-top: 16px;
-    padding: 0 8px;
-  }
-
+  .profile-container { margin-top: 14px; padding: 0 8px; }
   .profile-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    padding: 18px;
-    margin-bottom: 24px;
+    padding: 16px;
+    margin-bottom: 20px;
   }
-
-  .profile-stats {
-    font-size: 0.96rem;
-    padding: 7px 12px;
-  }
-
-  .profile-pic-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .my-posts-grid,
-  .my-videos-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .profile-video-info {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .delete-btn {
-    width: 100%;
-  }
+  .profile-stats { font-size: 12px; }
+  .profile-pic-btn { width: 100%; justify-content: center; }
+  .my-posts-grid, .my-videos-grid { grid-template-columns: 1fr; gap: 12px; }
+  .profile-video-info { flex-direction: column; align-items: stretch; }
+  .delete-btn { width: 100%; text-align: center; }
 }
 
 @media (max-width: 420px) {
-  .profile-header {
-    padding: 14px;
-  }
-
-  .profile-avatar {
-    width: 96px;
-    height: 96px;
-  }
-
-  .no-posts {
-    padding: 34px 14px;
-  }
-
-  .create-btn {
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 0.98rem;
-  }
+  .profile-header { padding: 14px; }
+  .profile-avatar { width: 88px; height: 88px; }
+  .no-posts { padding: 32px 12px; }
+  .create-btn { width: 100%; }
 }

@@ -1,23 +1,29 @@
+/* ============================================================
+   PUBLIC PROFILE — Tumblr Design System
+   ============================================================ */
+
 .public-profile-page {
-  width: min(1120px, 96vw);
-  margin: 24px auto 44px;
-  padding: 0 16px;
+  width: min(1120px, 96%);
+  margin: 20px auto 48px;
+  padding: 0 14px;
 }
 
+/* ── Header ── */
 .public-profile-header {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--card-radius);
-  padding: 24px;
+  padding: 22px;
   box-shadow: var(--shadow-sm);
 }
 
+/* ── Avatar ── */
 .public-profile-avatar {
-  width: 94px;
-  height: 94px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   overflow: hidden;
   background: var(--input-bg);
@@ -26,8 +32,9 @@
   align-items: center;
   justify-content: center;
   color: var(--text-primary);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 400;
+  flex-shrink: 0;
 }
 
 .public-profile-avatar img {
@@ -36,89 +43,120 @@
   object-fit: cover;
 }
 
+/* ── Summary ── */
 .public-profile-summary {
   flex: 1;
   min-width: 0;
 }
 
 .public-profile-summary h1 {
-  margin: 0;
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  margin: 0 0 4px;
+  font-size: clamp(16px, 4vw, 21px);
+  font-weight: 400;
   color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
 .public-profile-summary p {
-  margin: 6px 0 0;
+  margin: 0;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .public-profile-follow-meta {
   margin-top: 8px;
-  font-size: 0.9rem;
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
+/* ── Buttons ── */
 .public-profile-follow-btn,
 .public-profile-secondary-btn {
-  border: 0;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border: none;
+  border-radius: var(--btn-radius);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .public-profile-follow-btn {
   background: var(--accent-color);
-  color: #fff;
+  color: #000000;
+}
+
+.public-profile-follow-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .public-profile-follow-btn.active {
-  background: #ef5350;
+  background: rgba(255, 73, 48, 0.15);
+  color: #ff6b55;
+  border: 1px solid rgba(255, 73, 48, 0.3);
+}
+
+.public-profile-follow-btn.active:hover {
+  background: rgba(255, 73, 48, 0.22);
 }
 
 .public-profile-follow-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .public-profile-secondary-btn {
-  background: var(--input-bg);
-  color: var(--text-primary);
+  background: transparent;
+  color: var(--text-secondary);
   border: 1px solid var(--border-color);
 }
 
+.public-profile-secondary-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* ── Section ── */
 .public-profile-section {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .public-profile-section h2 {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
 }
 
+/* ── Follow grid ── */
 .public-profile-follow-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
 }
 
 .public-profile-follow-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .public-profile-follow-toggle-btn {
   border: 1px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 0.88rem;
-  font-weight: 600;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--btn-radius);
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
 }
 
 .public-profile-follow-toggle-btn:hover {
@@ -131,20 +169,23 @@
   border: 1px solid var(--border-color);
   border-radius: var(--card-radius);
   padding: 14px;
+  box-shadow: var(--shadow-sm);
 }
 
 .public-profile-follow-card h3 {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .public-profile-follow-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 16px;
   color: var(--text-secondary);
   display: grid;
   gap: 4px;
+  font-size: 13px;
 }
 
 .public-profile-follow-user-btn {
@@ -152,40 +193,54 @@
   padding: 0;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.92rem;
+  font-size: 13px;
+  font-family: var(--font-family);
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .public-profile-follow-user-btn:hover {
   color: var(--accent-color);
 }
 
+/* ── State cards ── */
 .public-profile-empty,
 .public-profile-page-state {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--card-radius);
-  padding: 22px;
+  padding: 20px;
   color: var(--text-secondary);
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
 }
 
+/* ── Grids ── */
 .public-profile-post-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
 }
 
 .public-profile-video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
 }
 
+/* ── Video card ── */
 .public-profile-video-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--card-radius);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.public-profile-video-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-md);
 }
 
 .public-profile-video-player {
@@ -202,36 +257,35 @@
 .public-profile-video-content h3 {
   margin: 0;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .public-profile-video-content p {
-  margin: 6px 0 10px;
+  margin: 4px 0 8px;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 12px;
 }
 
 .public-profile-video-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 11px;
 }
 
+/* ── Responsive ── */
 @media (max-width: 680px) {
-  .public-profile-page {
-    padding: 0 10px;
-  }
-
+  .public-profile-page { padding: 0 8px; }
   .public-profile-header {
     flex-direction: column;
     align-items: flex-start;
-    padding: 18px;
+    padding: 16px;
   }
-
   .public-profile-follow-btn,
   .public-profile-secondary-btn {
     width: 100%;
+    text-align: center;
   }
 }

@@ -1,154 +1,182 @@
+/* ============================================================
+   VIDEO UPLOAD — Tumblr Design System
+   ============================================================ */
+
 .video-form-container {
   display: flex;
   justify-content: center;
   padding: 2rem;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 64px);
+  background: var(--bg-primary);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .video-form-card {
   width: 100%;
-  max-width: 600px;
-  background: var(--bg-secondary, #ffffff);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: var(--text-primary, #333333);
-  border: 1px solid var(--border-color, #eaeaea);
+  max-width: 580px;
+  background: var(--bg-secondary);
+  padding: 32px;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-sm), var(--shadow-md);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  animation: fadeIn 0.35s ease forwards;
+  align-self: flex-start;
+  margin-top: 0;
 }
 
 .video-form-card h2 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: var(--text-primary, #333333);
+  margin-bottom: 24px;
+  color: var(--text-primary);
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
 }
 
 .video-form-card .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 18px;
 }
 
 .video-form-card label {
   display: block;
   font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--text-secondary, #555555);
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .video-form-card input[type="text"],
 .video-form-card textarea {
   width: 100%;
-  padding: 0.8rem;
-  border: 1px solid var(--border-color, #cccccc);
-  border-radius: 8px;
-  font-size: 1rem;
-  background: var(--input-bg, #fafafa);
-  color: var(--text-primary, #333333);
-  transition: border-color 0.3s;
+  padding: 11px 13px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--input-radius);
+  font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .video-form-card textarea {
-  min-height: 120px;
+  min-height: 110px;
   line-height: 1.5;
   resize: vertical;
-  caret-color: var(--accent-color, #007bff);
+  caret-color: var(--accent-color);
 }
 
 .video-form-card textarea::placeholder,
 .video-form-card input[type="text"]::placeholder {
-  color: var(--text-secondary, #777777);
+  color: var(--text-secondary);
+  opacity: 0.6;
 }
 
 .video-form-card input[type="file"] {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
 
+/* ── File input label ── */
 .file-input-label {
   width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px dashed var(--border-color, #cccccc);
-  border-radius: 8px;
-  background: var(--input-bg, #fafafa);
+  padding: 14px 16px;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--input-radius);
+  background: var(--input-bg);
   cursor: pointer;
-  color: var(--text-primary, #333333);
+  color: var(--text-secondary);
   text-align: center;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  font-size: 13px;
+  transition: border-color 0.2s, color 0.2s;
+  display: block;
 }
 
 .file-input-label:hover {
-  border-color: var(--accent-color, #007bff);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .selected-file-name {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666666);
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
   word-break: break-word;
 }
 
 .video-form-card input:focus,
 .video-form-card textarea:focus {
   outline: none;
-  border-color: var(--accent-color, #007bff);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-tint);
 }
 
+/* ── Submit ── */
 .submit-btn {
   width: 100%;
-  padding: 1rem;
-  background-color: #007bff;
-  color: white;
+  padding: 12px;
+  background: var(--accent-color);
+  color: #000000;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
+  border-radius: var(--btn-radius);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #0056b3;
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .submit-btn:disabled {
-  background-color: #cccccc;
+  background: var(--border-color);
+  color: var(--text-secondary);
   cursor: not-allowed;
 }
 
+/* ── Progress ── */
 .progress-container {
-  margin-bottom: 1.5rem;
+  margin-bottom: 18px;
   text-align: center;
 }
 
 .progress-bar-bg {
   width: 100%;
-  background-color: #e0e0e0;
-  height: 10px;
-  border-radius: 5px;
+  background: var(--border-color);
+  height: 6px;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 0.5rem;
+  margin-bottom: 6px;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background-color: #4caf50;
+  background: var(--accent-color);
+  border-radius: 6px;
   transition: width 0.3s ease;
 }
 
 .progress-text {
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666666);
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
+/* ── Error ── */
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 1rem;
+  background: rgba(255, 73, 48, 0.1);
+  color: #ff6b55;
+  padding: 12px 14px;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 18px;
+  font-size: 13px;
+  border: 1px solid rgba(255, 73, 48, 0.2);
   text-align: center;
 }
